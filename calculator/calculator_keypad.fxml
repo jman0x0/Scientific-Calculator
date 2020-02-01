@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root type="javafx.scene.layout.GridPane" xmlns:fx="http://javafx.com/fxml" alignment="CENTER" hgap="6" vgap="6" maxHeight="Infinity" maxWidth="Infinity">
+    <Button GridPane.columnIndex="0" id="keypad_function" GridPane.rowIndex="0" >1/x</Button>
+    <Button GridPane.columnIndex="1" id="keypad_function" GridPane.rowIndex="0" >asin</Button>
+    <Button GridPane.columnIndex="2" id="keypad_function" GridPane.rowIndex="0" >sin</Button>
+    <Button GridPane.columnIndex="3" id="keypad_memory" GridPane.rowIndex="0" >MR</Button>
+    <Button GridPane.columnIndex="4" id="keypad_memory" GridPane.rowIndex="0" >M+</Button>
+    <Button GridPane.columnIndex="5" id="keypad_memory" GridPane.rowIndex="0" >M–</Button>
+    <Button GridPane.columnIndex="6" id="keypad_memory" GridPane.rowIndex="0" >M÷</Button>
+    <Button GridPane.columnIndex="7" id="keypad_memory" GridPane.rowIndex="0" >M×</Button>
+    <Button GridPane.columnIndex="8" id="keypad_memory" GridPane.rowIndex="0" >MC</Button>
+    <Button GridPane.columnIndex="0" id="keypad_function" GridPane.rowIndex="1" >ln</Button>
+    <Button GridPane.columnIndex="1" id="keypad_function" GridPane.rowIndex="1" >acos</Button>
+    <Button GridPane.columnIndex="2" id="keypad_function" GridPane.rowIndex="1" >cos</Button>
+    <Button GridPane.columnIndex="3" id="keypad_operator" GridPane.rowIndex="1" >[</Button>
+    <Button GridPane.columnIndex="4" id="keypad_operator" GridPane.rowIndex="1" >]</Button>
+    <Button GridPane.columnIndex="5" id="keypad_operator" GridPane.rowIndex="1" >(</Button>
+    <Button GridPane.columnIndex="6" id="keypad_operator" GridPane.rowIndex="1" >)</Button>
+    <Button GridPane.columnIndex="7" id="keypad_erase" GridPane.rowIndex="1" >DEL</Button>
+    <Button GridPane.columnIndex="8" id="keypad_erase" GridPane.rowIndex="1" >AC</Button>
+    <Button GridPane.columnIndex="0" id="keypad_function" GridPane.rowIndex="2" >log</Button>
+    <Button GridPane.columnIndex="1" id="keypad_function" GridPane.rowIndex="2" >atan</Button>
+    <Button GridPane.columnIndex="2" id="keypad_function" GridPane.rowIndex="2" >tan</Button>
+    <Button GridPane.columnIndex="3" GridPane.rowIndex="2" >7</Button>
+    <Button GridPane.columnIndex="4" GridPane.rowIndex="2" >8</Button>
+    <Button GridPane.columnIndex="5" GridPane.rowIndex="2" >9</Button>
+    <Button GridPane.columnIndex="6" id="keypad_operator" GridPane.rowIndex="2" >×</Button>
+    <Button GridPane.columnIndex="7" id="keypad_operator" GridPane.rowIndex="2" >÷</Button>
+    <Button GridPane.columnIndex="8" id="keypad_operator" GridPane.rowIndex="2" GridPane.rowSpan="2">ANS</Button>
+    <Button GridPane.columnIndex="0" id="keypad_function" GridPane.rowIndex="3" >x^2</Button>
+    <Button GridPane.columnIndex="1" id="keypad_function" GridPane.rowIndex="3" >√x</Button>
+    <Button GridPane.columnIndex="2" id="keypad_function" GridPane.rowIndex="3" >rand</Button>
+    <Button GridPane.columnIndex="3" GridPane.rowIndex="3" >4</Button>
+    <Button GridPane.columnIndex="4" GridPane.rowIndex="3" >5</Button>
+    <Button GridPane.columnIndex="5" GridPane.rowIndex="3" >6</Button>
+    <Button GridPane.columnIndex="6" id="keypad_operator" GridPane.rowIndex="3" >%</Button>
+    <Button GridPane.columnIndex="7" id="keypad_operator" GridPane.rowIndex="3">^</Button>
+    <Button GridPane.columnIndex="0" id="keypad_function" GridPane.rowIndex="4" >min</Button>
+    <Button GridPane.columnIndex="1" id="keypad_function" GridPane.rowIndex="4" >max</Button>
+    <Button GridPane.columnIndex="2" id="keypad_function" GridPane.rowIndex="4" >abs</Button>
+    <Button GridPane.columnIndex="3" GridPane.rowIndex="4" >1</Button>
+    <Button GridPane.columnIndex="4" GridPane.rowIndex="4" >2</Button>
+    <Button GridPane.columnIndex="5" GridPane.rowIndex="4" >3</Button>
+    <Button GridPane.columnIndex="6" id="keypad_operator" GridPane.rowIndex="4" >+</Button>
+    <Button GridPane.columnIndex="7" id="keypad_operator" GridPane.rowIndex="4" >–</Button>
+    <Button GridPane.columnIndex="8" id="keypad_operator" GridPane.rowIndex="4" GridPane.rowSpan="2">=</Button>
+    <Button GridPane.columnIndex="0" id="keypad_function" GridPane.rowIndex="5" >φ</Button>
+    <Button GridPane.columnIndex="1" id="keypad_function" GridPane.rowIndex="5" >e</Button>
+    <Button GridPane.columnIndex="2" id="keypad_function" GridPane.rowIndex="5" >π</Button>
+    <Button GridPane.columnIndex="3" id="keypad_operator" GridPane.rowIndex="5" >-</Button>
+    <Button GridPane.columnIndex="4" GridPane.rowIndex="5" >0</Button>
+    <Button GridPane.columnIndex="5" id="keypad_operator" GridPane.rowIndex="5" >.</Button>
+    <Button GridPane.columnIndex="6" id="keypad_operator" GridPane.rowIndex="5" >,</Button>
+    <Button GridPane.columnIndex="7" id="keypad_operator" GridPane.rowIndex="5" >!</Button>
+
+</fx:root>

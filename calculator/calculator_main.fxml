@@ -1,0 +1,12 @@
+<?import javafx.scene.layout.BorderPane?>
+<?import calculator.Display?>
+<?import calculator.Keypad?>
+
+<BorderPane fx:controller="calculator.Main" xmlns:fx="http://javafx.com/fxml" stylesheets="@../media/stylesheet.css">
+    <top>
+        <Display fx:id="display"/>
+    </top>
+    <center>
+        <Keypad fx:id="keypad"/>
+    </center>
+</BorderPane>

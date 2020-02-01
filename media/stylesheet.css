@@ -1,0 +1,85 @@
+@font-face {
+    src: url("Gold-Regular.ttf");
+}
+
+.text-field {
+    -fx-font-family: Gold;
+    -fx-alignment: CENTER;
+    -fx-border-color: transparent;
+    -fx-padding: 0 0 0 0;
+    -fx-background-color: transparent;
+}
+
+.label {
+    -fx-font-family: Gold;
+    -fx-font-size: 1.5em;
+    -fx-alignment: BOTTOM-LEFT;
+}
+
+.button {
+    -fx-font-family: Gold;
+    -fx-font-size: 2em;
+    -fx-max-height: infinity;
+    -fx-max-width: infinity;
+}
+
+#keypad {
+    -fx-background-image: url("keypad_texture.png");
+    -fx-background-repeat: stretch;
+    -fx-background-size: 100% 100%;
+    -fx-background-position: center center;
+    -fx-pref-height: 100%;
+    -fx-pref-width: 100%;
+}
+
+#display {
+    /*-fx-alignment: CENTER;*/
+    -fx-border-style: solid inside;
+    -fx-border-width: 2;
+    -fx-border-color: #000000;
+    -fx-background-color: #D4D4D4;
+}
+
+#keypad_digit {
+
+}
+
+#keypad_operator {
+    -fx-background-color: linear-gradient(#c3c3d7, #b1b1c3);
+}
+#keypad_operator:hover {
+    -fx-background-color: linear-gradient(#d2d2e6, #c4c4d7);
+}
+#keypad_operator:pressed {
+    -fx-background-color: linear-gradient(#b9b9cd, #a2a2b4);
+}
+
+#keypad_memory {
+    -fx-background-color: linear-gradient(#f5ad7f, #eb904d);
+}
+#keypad_memory:hover {
+    -fx-background-color: linear-gradient(#f5bea0, #eb965d);
+}
+#keypad_memory:pressed {
+    -fx-background-color: linear-gradient(#f5a384, #eb8651);
+}
+
+#keypad_erase {
+    -fx-background-color: linear-gradient(#f57468, #eb5140);
+}
+#keypad_erase:hover {
+    -fx-background-color: linear-gradient(#f58e83, #eb5a4d);
+}
+#keypad_erase:pressed {
+    -fx-background-color: linear-gradient(#f56657, #eb4636);
+}
+
+#keypad_function {
+    -fx-background-color: linear-gradient(#5ca1f5, #458aeb);
+}
+#keypad_function:hover {
+    -fx-background-color: linear-gradient(#7db8f5, #5494eb);
+}
+#keypad_function:pressed {
+    -fx-background-color: linear-gradient(#539ef5, #3a7feb);
+}

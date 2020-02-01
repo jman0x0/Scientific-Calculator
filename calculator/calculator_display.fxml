@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml">
+    <TextField fx:id="editor"/>
+    <StackPane fx:id="test">
+        <Label fx:id="status" StackPane.alignment="BOTTOM_LEFT">MR: 0</Label>
+        <TextField fx:id="output" editable="false">0</TextField>
+    </StackPane>
+</fx:root>
