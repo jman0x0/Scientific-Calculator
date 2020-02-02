@@ -47,4 +47,19 @@ public class Configuration {
      * Maximum amount of decimal places used to display the memory's contents.
      */
     public static final int MEMORY_DIGIT_COUNT = 3;
+
+    /**
+     * Upper value bound before transitioning to scientific format.
+     */
+    public static final double STANDARD_UPPER_BOUND = 10e12;
+
+    /**
+     * Lower value bound before transitioning to scientific format.
+     */
+    public static final double STANDARD_LOWER_BOUND = 10e-6;
+
+    /**
+     * Lower value bound before transition to 0.
+     */
+    public static final double SCIENTIFIC_LOWER_BOUND = 10e-308;
 }
