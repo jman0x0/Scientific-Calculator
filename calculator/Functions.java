@@ -6,6 +6,9 @@ import java.util.Map;
 import java.lang.Math;
 import java.util.ArrayList;
 
+/**
+ * Class used to map identifiers composed of strings to functional objects.
+ */
 public class Functions {
 	public static class Functor {
 		public Function<ArrayList<Double>, Double> function;
@@ -30,10 +33,16 @@ public class Functions {
 	public boolean contains(String name) {
 		return m_functions.containsKey(name);
 	}
-	
-	public boolean contains(String name, int args) {
-		if (contains(name)) {
-			final ArrayList<Functor> overloads = m_functions.get(name);
+
+	/**
+	 * Check if an overloaded function exists.
+	 * @param identifier Name of the overloaded function.
+	 * @param args Number of arguments that overload accepts.
+	 * @return True if a function with a matching name and overload is found, else false.
+	 */
+	public boolean contains(String identifier, int args) {
+		if (contains(identifier)) {
+			final ArrayList<Functor> overloads = m_functions.get(identifier);
 		
 			for (Functor function : overloads) {
 				if (function.arguments == args) {
@@ -43,14 +52,26 @@ public class Functions {
 		}
 		return false;
 	}
-	
-	public boolean remove(String name) {
-		return m_functions.remove(name) != null;
+
+	/**
+	 * Remove all overloads.
+	 * @param identifier Name pertaining to the overloads.
+	 * @return True if the overloads were found and removed, else false.
+	 */
+	public boolean remove(String identifier) {
+		return m_functions.remove(identifier) != null;
 	}
-	
-	public boolean remove(String name, int args) {
-		if (contains(name)) {
-			final ArrayList<Functor> overloads = m_functions.get(name);
+
+
+	/**
+	 * Remove an overloaded function.
+	 * @param identifier The name of the overloaded function.
+	 * @param args Number of arguments for that overload.
+	 * @return True if the function was found and removed, else false.
+	 */
+	public boolean remove(String identifier, int args) {
+		if (contains(identifier)) {
+			final ArrayList<Functor> overloads = m_functions.get(identifier);
 		
 			for (int idx = 0; idx != overloads.size(); ++idx) {
 				if (overloads.get(idx).arguments == args) {
@@ -61,6 +82,11 @@ public class Functions {
 		return false;
 	}
 
+	/**
+	 * Get all of the overloads from a given identifier.
+	 * @param identifier Shared name between all overloaded functions.
+	 * @return A list containing all the overloads.
+	 */
 	private ArrayList<Functor> getOverloads(String identifier) {
 		if (!contains(identifier)) {
 			m_functions.put(identifier, new ArrayList<>());
@@ -68,6 +94,12 @@ public class Functions {
 		return m_functions.get(identifier);
 	}
 
+	/**
+	 * Map a function to an identifier.
+	 * @param identifier Name used to map the function to.
+	 * @param arguments Number of arguments accepted by this function.
+	 * @param function The actual functional object.
+	 */
 	public void emplace(String identifier, int arguments, Function<ArrayList<Double>, Double> function) {
 		final ArrayList<Functor> overloads = getOverloads(identifier);
 
@@ -79,6 +111,12 @@ public class Functions {
 		overloads.add(new Functor(function, arguments));
 	}
 
+	/**
+	 * Invoke a mapped math function.
+	 * @param identifier The name of the function to call.
+	 * @param arguments The numeric arguments to pass to the function.
+	 * @return The result of the invoked math function.
+	 */
 	public Double apply(String identifier, ArrayList<Double> arguments) {
 		final ArrayList<Functor> overloads = m_functions.get(identifier);
 
@@ -97,7 +135,10 @@ public class Functions {
 	public boolean isEmpty() {
 		return m_functions.isEmpty();
 	}
-	
+
+	/**
+	 * Default set of functions that are available within the java library plus a few more.
+	 */
 	public static final Functions JMATH;
 	static {
 		JMATH = new Functions();
@@ -162,6 +203,9 @@ public class Functions {
 			return 0.5 * (Math.log(1+x) - Math.log(1-x));
 		});
 		JMATH.emplace("log", 1, (args) -> {
+			return Math.log(args.get(0));
+		});
+		JMATH.emplace("ln", 1, (args) -> {
 			return Math.log(args.get(0));
 		});
 		JMATH.emplace("log10", 1, (args) -> {

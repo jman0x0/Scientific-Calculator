@@ -92,7 +92,12 @@ public class Calculator {
     public void setConstants(Constants constants) {
     	m_constants = constants;
     }
-    
+
+    /**
+     * Evaluate
+     * @param expression The expression to evaluate.
+     * @return The value of the expression, interpreted by the calculator.
+     */
     public double evaluate(String expression)
     {
         //Strip whitespace before processing.
@@ -141,11 +146,24 @@ public class Calculator {
         return start;
     }
 
+    /**
+     * Evaluate and interpret an expression with respect to starting and ending indices.
+     * @param expression Expression and characters to evaluate.
+     * @param start Starting index to evaluate from.
+     * @param end Ending limiting index.
+     * @return The value of the expression, interpreted by the calculator.
+     */
     public double evaluate(String expression, int start, int end)
     {
         return evaluateGrouping(expression, start, end, new ArrayList<Character>()).value;
     }
-    
+
+    /**
+     * Determine if this operator has precedence over the other.
+     * @param recent
+     * @param next
+     * @return
+     */
     public boolean hasPrecedence(Operator recent, Operator next)
     {
     	final int lp = recent.getPrecedence();
@@ -158,13 +176,15 @@ public class Calculator {
     	//Right associativity with equal precedence has priority.
     	return (lp == rp) && (next.getAssociativity() == Operator.Associativity.LEFT_TO_RIGHT);
     }
-    
+
+    /**
+     * Process the operator stack if the future
+     * @param operations Stack containing all operations, ordered by high precedence.
+     * @param values Stack containing all extracted values.
+     * @param futureOp The next operator to account for.
+     */
     public void processNextOperator(Stack<Operator> operations, Stack<Double> values, Operator futureOp)
     {
-    	//Left associative operators can be processed immediately, because we evaluate from left to right.
-        //In contrast, right associative operators act on unknown values, thus we must wait until it is suitable.
-        //if ((!operations.empty() && operations.peek().getAssociativity() == Operator.Associativity.LEFT_TO_RIGHT) || (futureOp.getAssociativity() == Operator.Associativity.LEFT_TO_RIGHT)) {
-        //if (futureOp.getAssociativity() == Operator.Associativity.LEFT_TO_RIGHT) {
         while (!operations.empty() && hasPrecedence(operations.peek(), futureOp)) {
         	final Operator operator = operations.pop();
             final ArrayList<Double> arguments = new ArrayList<>();
@@ -177,13 +197,19 @@ public class Calculator {
             //Use computed value for further operations.
             values.push(computed);
         }
-        Number s = 1;
-        //}
         //Future operation must be processed later.
         //It could have greater or smaller precedence than the following operations.
         operations.push(futureOp);
     }
 
+    /**
+     * Evaluate a grouping(formed via brackets/starting and ending indices).
+     * @param expression The expression to be parsed.
+     * @param start The starting index to begin evaluating from.
+     * @param end The ending and limiting index.
+     * @param closers List of limiting delimeters.
+     * @return Parsing containing the expression's value, ending index, and closing character.
+     */
     public Parsing evaluateGrouping(String expression, int start, int end, List<Character> closers)
     {
     	//Stacks are FILO/LIFO data structures.
@@ -260,6 +286,13 @@ public class Calculator {
         return new Parsing(result, start+1, closer);
     }
 
+    /**
+     * Extract the value of the corresponding term.
+     * @param expression The expression to be parsed.
+     * @param start The starting index to begin reading from.
+     * @param end The ending and limiting index.
+     * @return The term corresponding to an OPERAND or OPERATOR and extracted value.
+     */
     public Term extractTerm(String expression, int start, int end) {
         final char ch = expression.charAt(start);
 
@@ -285,6 +318,14 @@ public class Calculator {
         }
     }
 
+    /**
+     * Extract a set of arguments from enclosing brackets.
+     * @param expression The expression to be parsed.
+     * @param start The starting index to begin parsing from.
+     * @param end The ending and limiting index.
+     * @param closingBracket Limiting closing bracket.
+     * @return A multiparsing containing the ending index, optional closer, and extracted list of arguments.
+     */
 	public MultipleParse evaluateArguments(String expression, int start, int end, char closingBracket) {
         final MultipleParse parse = new MultipleParse();
 
@@ -302,7 +343,14 @@ public class Calculator {
 
         return parse;
     }
-		
+
+    /**
+     * Parse and evaluate an identifier composed of alphanumeric values.
+     * @param expression The expression to be parsed.
+     * @param start The starting index to begin parsing from.
+     * @param end The ending and limiting index.
+     * @return Parsing containing ending index, numeric value, and closing character.
+     */
     public Parsing parseIdentifier(String expression, int start, int end) {
         String identifier = null;
 		//Extract the entire identifier.
@@ -335,6 +383,7 @@ public class Calculator {
 			throw new RuntimeException("Unknown identifier");
 		}
     }
+
 
     public Parsing parseDouble(String expression, int start, int end) {
         int idx = start;

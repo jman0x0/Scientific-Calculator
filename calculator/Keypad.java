@@ -19,6 +19,7 @@ public class Keypad extends GridPane {
     }
 
     public Keypad() {
+        //Load the keypad's design and make this the root and controller.
         final String pathway = "calculator_keypad.fxml";
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(pathway));
         fxmlLoader.setRoot(this);
@@ -44,6 +45,7 @@ public class Keypad extends GridPane {
         final double XPADDING = getHgap() * (COLUMNS + 1);
         final double YPADDING = getVgap() * (ROWS + 1);
 
+        //Scale each button when the pane changes dimensions.
         widthProperty().addListener((observableValue, oldWidth, newWidth) -> {
             for (Node node : getChildren()) {
                 final Button button = (Button)node;
@@ -59,6 +61,7 @@ public class Keypad extends GridPane {
             }
         });
 
+        //Make sure each key will scale its font.
         for (Node node : getChildren()) {
             final Button button = (Button)node;
             button.widthProperty().addListener((observableValue, oldWidth, newWidth) -> {
@@ -71,6 +74,7 @@ public class Keypad extends GridPane {
     }
 
     private void disableFocus() {
+        //Button should never take focus.
         for (Node node : getChildren()) {
             node.setFocusTraversable(false);
         }
@@ -78,6 +82,7 @@ public class Keypad extends GridPane {
 
     private static void scaleFont(Button button)
     {
+        //Scale the button's font in accordance to its dimensions.
         final long width = Math.round(button.getWidth());
         final long height = Math.round(button.getHeight());
         final long min = Math.min(width, height*4/3);

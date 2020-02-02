@@ -16,6 +16,14 @@ public class Operator {
     private Associativity associativity;
     private Function<ArrayList<Double>, Double> operation;
 
+    /**
+     * An operator has operands, precedence, identification, associativity, and an actual function.
+     * @param operands The number of operands needed to invoke this operator.
+     * @param precedence The precedence relative to other operators.
+     * @param identifier The named identifier for this operator.
+     * @param associativity The associativity needed to process this operator.
+     * @param operation The actual functional object that computes the operator.
+     */
     public Operator(int operands, int precedence, String identifier, Associativity associativity, Function<ArrayList<Double>, Double> operation)
     {
         this.operands = operands;
@@ -25,22 +33,39 @@ public class Operator {
         this.operation = operation;
     }
 
+    /**
+     * @return How many operands needed to invoke this operator.
+     */
     public int getOperands() {
         return operands;
     }
 
+    /**
+     * @return The precedence/priority of this operator.
+     */
     public int getPrecedence() {
         return precedence;
     }
 
+    /**
+     * @return The identifier corresponding to this operator.
+     */
     public String getIdentifier() {
         return identifier;
     }
 
+    /**
+     * @return The associativity of this operator.
+     */
     public Associativity getAssociativity() {
         return associativity;
     }
 
+    /**
+     * Invoke this operator with an argument list.
+     * @param args The numeric values to be processed by the operator.
+     * @return The output of this operator.
+     */
     public Double apply(ArrayList<Double> args) {
         return operation.apply(args);
     }
