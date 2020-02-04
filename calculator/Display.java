@@ -230,18 +230,13 @@ public class Display extends VBox {
         editor.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-
-                //Evaluate the expression.
-                if (keyEvent.getCode() == KeyCode.ENTER) {
-                    evaluateInput();
-                    ++active;
-                }
                 switch (keyEvent.getCode()) {
                     case UP:
                         break;
                     case DOWN:
                         break;
                     case ENTER:
+                        //Evaluate the expression.
                         evaluateInput();
                         ++active;
                         break;
