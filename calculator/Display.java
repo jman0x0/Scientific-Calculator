@@ -4,7 +4,9 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
@@ -13,10 +15,11 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 
 public class Display extends VBox {
+    private int active;
     private double answer;
     private double memory;
     @FXML
-    public TextField editor;
+    public TextArea editor;
 
     @FXML
     public TextField output;
@@ -60,7 +63,9 @@ public class Display extends VBox {
         calculator.getConstants().put("MR", memory);
 
         try {
-            final double value = calculator.evaluate(editor.getText());
+            final String expression = getActiveExpression();
+            System.out.println(expression);
+            final double value = calculator.evaluate(expression);
             updateDisplay(value);
 
         } catch (Exception exception) {
@@ -108,9 +113,9 @@ public class Display extends VBox {
         final double reservedHeight = height * Configuration.DISPLAY_RESERVATION;
         super.setPrefHeight(reservedHeight);
 
-        final long fontSize = Math.round(Math.min(width/18, reservedHeight/3));
-        status.setStyle("-fx-font-size:" + fontSize*4/9);
-        editor.setStyle("-fx-font-size:" + fontSize);
+        final long fontSize = Math.round(Math.min(width/16, reservedHeight/6));
+        status.setStyle("-fx-font-size:" + fontSize*2/3);
+        editor.setStyle("-fx-font-size:" + fontSize*3/4);
         output.setStyle("-fx-font-size:" + fontSize);
     }
 
@@ -186,7 +191,33 @@ public class Display extends VBox {
         editor.insertText(caret, text);
     }
 
+    private int getLineNumber(String text, int position) {
+        int lineNumber = 0;
+        for (int i = 0; i < position; ++i) {
+            if (text.charAt(i) == '\n') {
+                ++lineNumber;
+            }
+        }
+
+        return lineNumber;
+    }
+
+    private String getActiveExpression() {
+        final var paragraphs = editor.getParagraphs();
+        return paragraphs.get(active).toString();
+    }
+
     private void attachListeners() {
+        //Prevent the user from modifying previous entries.
+        editor.setTextFormatter(new TextFormatter<String>((TextFormatter.Change change) -> {
+            final String oldText = change.getControlText();
+            final int caret = change.getRangeStart();
+            final int lineNumber = getLineNumber(oldText, caret);
+            if (lineNumber != active && change.isContentChange()) {
+                return null;
+            }
+            return change;
+        }));
         //Listen to changes in text.
         editor.textProperty().addListener(
             (observableValue, oldValue, newValue) -> {
@@ -205,6 +236,7 @@ public class Display extends VBox {
                 //Evaluate the expression.
                 if (keyEvent.getCode() == KeyCode.ENTER) {
                     evaluateInput();
+                    ++active;
                 }
             }
         });

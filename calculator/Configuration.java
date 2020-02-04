@@ -31,12 +31,12 @@ public class Configuration {
     /**
      * Portion of the screen dedicated towards the display.
      */
-    public static final double DISPLAY_RESERVATION = 0.25;
+    public static final double DISPLAY_RESERVATION = 1/3.;
 
     /**
      * Portion of the screen dedicated towards the keypad.
      */
-    public static final double KEYPAD_RESERVATION = 0.75;
+    public static final double KEYPAD_RESERVATION = 1.0 - DISPLAY_RESERVATION;
 
     /**
      * Maximum amount of decimal places used to display the result of an expression.

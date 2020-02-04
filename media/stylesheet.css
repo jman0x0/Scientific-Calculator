@@ -2,6 +2,32 @@
     src: url("Gold-Regular.ttf");
 }
 
+.text-area {
+    -fx-font-family: Gold;
+    -fx-alignment: CENTER;
+    -fx-border-color: transparent;
+    -fx-padding: 0 0 0 0;
+    -fx-background-color: transparent;
+}
+.text-area *.text {
+    -fx-text-alignment: center;
+}
+.text-area .scroll-pane {
+    -fx-background-color: transparent;
+}
+.text-area .scroll-pane .viewport{
+    -fx-background-color: transparent;
+}
+.text-area .scroll-pane .content{
+    -fx-background-color: transparent;
+}
+/* Prevent the scrollbar from ever appearing by not allowing it to even grow.
+   Stylistically, the scrollbar clutters the view, a bit of an eyesore. */
+.text-area .scroll-pane {
+    -fx-hbar-policy: never;
+    -fx-vbar-policy: never;
+}
+
 .text-field {
     -fx-font-family: Gold;
     -fx-alignment: CENTER;
