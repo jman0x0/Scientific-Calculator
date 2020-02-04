@@ -1,11 +1,18 @@
 package calculator;
 
-import java.util.*;
+import java.util.Stack;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Arrays;
 
 public class Calculator {
     private Functions m_functions;
     private OperatorList m_operators;
 	private Constants m_constants;
+
+    /**
+     * Term represents an OPERAND or OPERATOR and appropriate extracted value and index.
+     */
     public static class Term {
         public enum Type {
             OPERATOR,
@@ -24,9 +31,12 @@ public class Calculator {
         public Object value;
     }
 
+    /**
+     * Parsing contains an extracted value, ending index, and optional closing delimiter.
+     */
     public static class Parsing {
-        public Double value;
         public int extract;
+        public Double value;
         public Character closer;
 
         public Parsing(Double value, int extract, Character closer) {
@@ -35,27 +45,18 @@ public class Calculator {
             this.closer = closer;
         }
     }
-	
-	public static class MultipleParse {
+
+    /**
+     * Arguments extracted from comma delimited arguments from a closed expression.
+     */
+	public static class ArgumentParse {
 		public ArrayList<Double> arguments;
 		public int extract;
 		
-		public MultipleParse() {
+		public ArgumentParse() {
 			this.arguments = new ArrayList<>();
 		}
 	}
-
-    public static class ExpressionInfo {
-        final String expression;
-        final int start;
-        final int end;
-
-        ExpressionInfo(String expression, int start, int end) {
-            this.expression = expression;
-            this.start = start;
-            this.end = end;
-        }
-    }
 
     public Calculator()
     {
@@ -158,23 +159,17 @@ public class Calculator {
         return evaluateGrouping(expression, start, end, new ArrayList<Character>()).value;
     }
 
-    /**
-     * Determine if this operator has precedence over the other.
-     * @param recent
-     * @param next
-     * @return
-     */
-    public boolean hasPrecedence(Operator recent, Operator next)
-    {
-    	final int lp = recent.getPrecedence();
-    	final int rp = next.getPrecedence();
-    	//Lower precedence always has priority.
-    	if (lp < rp) {
-    		return true;
-    	}
-    	//Otherwise they must have equivalent precedence and left associativity.
-    	//Right associativity with equal precedence has priority.
-    	return (lp == rp) && (next.getAssociativity() == Operator.Associativity.LEFT_TO_RIGHT);
+    public void processOperator(Stack<Operator> operations, Stack<Double> values) {
+        final Operator operator = operations.pop();
+        final ArrayList<Double> arguments = new ArrayList<>();
+
+        //Obtain all of the necessary arguments.
+        for (int op = 0; op < operator.getOperands(); ++op) {
+            arguments.add(0, values.pop());
+        }
+        final Double computed = operator.apply(arguments);
+        //Use computed value for further operations.
+        values.push(computed);
     }
 
     /**
@@ -185,17 +180,8 @@ public class Calculator {
      */
     public void processNextOperator(Stack<Operator> operations, Stack<Double> values, Operator futureOp)
     {
-        while (!operations.empty() && hasPrecedence(operations.peek(), futureOp)) {
-        	final Operator operator = operations.pop();
-            final ArrayList<Double> arguments = new ArrayList<>();
-            
-            //Obtain all of the necessary arguments.
-            for (int op = 0; op < operator.getOperands(); ++op) {
-            	arguments.add(0, values.pop());
-            }
-            final Double computed = operator.apply(arguments);
-            //Use computed value for further operations.
-            values.push(computed);
+        while (!operations.empty() && operations.peek().hasPrecedence(futureOp)) {
+        	processOperator(operations, values);
         }
         //Future operation must be processed later.
         //It could have greater or smaller precedence than the following operations.
@@ -244,19 +230,16 @@ public class Calculator {
             if (term.type == Term.Type.OPERATOR) {
             	final int operands = (previous != Term.Type.OPERAND ? 1 : 2);
                 final Operator futureOp = m_operators.getPreferenceOrAny((String)term.value, operands);
-                final int precedence = futureOp.getPrecedence();
                 final int UNARY = 1;
-                final int BINARY = 2;
-                
+
                 if (implicitMultiplication && futureOp.getOperands() == UNARY && futureOp.getAssociativity() == Operator.Associativity.RIGHT_TO_LEFT) {
                 	processNextOperator(operations, values, m_operators.getPreferenceOrAny("*", 2));
                 	implicitMultiplication = false;
                 }
                 processNextOperator(operations, values, futureOp);
                 if (futureOp.getOperands() != UNARY) {
-                	implicitMultiplication = false;
+                    implicitMultiplication = false;
                 }
-                
             }
             if (implicit) {
                 values.push((Double)backup);
@@ -272,14 +255,7 @@ public class Calculator {
 
         //Pop off remaining operations.
         while (!operations.empty()) {
-            final Operator operator = operations.pop();
-            final ArrayList<Double> arguments = new ArrayList<>();
-            
-            for (int op = 0; op < operator.getOperands(); ++op) {
-            	arguments.add(0, values.pop());
-            }
-            final Double computed = operator.apply(arguments);
-            values.push(computed);
+            processOperator(operations, values);
         }
 
        final Double result = values.empty() ? null : values.peek();
@@ -294,21 +270,21 @@ public class Calculator {
      * @return The term corresponding to an OPERAND or OPERATOR and extracted value.
      */
     public Term extractTerm(String expression, int start, int end) {
-        final char ch = expression.charAt(start);
+        final char type = expression.charAt(start);
 
-        if (Character.isDigit(ch) || ch == '.') {
+        if (Configuration.isFloatingPoint(type)) {
             //Must be an LHS operand.
             final Parsing parsing = parseDouble(expression, start, end);
             return new Term(Term.Type.OPERAND, parsing.extract, parsing.value);
         }
-        else if (isIdentifierChar(ch)) {
+        else if (Configuration.isIdentifierChar(type)) {
             //Must be an identifier mapped to a function or a constant.
             final Parsing parsing = parseIdentifier(expression, start, end);
             return new Term(Term.Type.OPERAND, parsing.extract, parsing.value);
         }
-        else if (isOpeningBracket(ch)) {
+        else if (Configuration.isOpeningBracket(type)) {
             //Evaluate internal expression first.
-            final Parsing parsing = evaluateGrouping(expression, start+1, end, Arrays.asList(getClosingBracket(ch)));
+            final Parsing parsing = evaluateGrouping(expression, start+1, end, Arrays.asList(Configuration.getClosingBracket(type)));
             return new Term(Term.Type.OPERAND, parsing.extract, parsing.value);
         }
         else {
@@ -326,8 +302,8 @@ public class Calculator {
      * @param closingBracket Limiting closing bracket.
      * @return A multiparsing containing the ending index, optional closer, and extracted list of arguments.
      */
-	public MultipleParse evaluateArguments(String expression, int start, int end, char closingBracket) {
-        final MultipleParse parse = new MultipleParse();
+	public ArgumentParse evaluateArguments(String expression, int start, int end, char closingBracket) {
+        final ArgumentParse parse = new ArgumentParse();
 
         while (start < end) {
             final Parsing argument = evaluateGrouping(expression, start, end, Arrays.asList(',', closingBracket));
@@ -356,7 +332,7 @@ public class Calculator {
 		//Extract the entire identifier.
 		int idx = start;
         for (; idx <= end; ++idx) {
-            if (idx == end || !isIdentifierChar(expression.charAt(idx))) {
+            if (idx == end || !Configuration.isIdentifierChar(expression.charAt(idx))) {
                 identifier = expression.substring(start, idx);
                 break;
             }
@@ -368,9 +344,9 @@ public class Calculator {
         }
 		
 		final char endingChar = idx < end ? expression.charAt(idx) : '\0';
-		final boolean isFunction = isOpeningBracket(endingChar);
+		final boolean isFunction = Configuration.isOpeningBracket(endingChar);
         if (isFunction && m_functions.contains(identifier)) {
-            final MultipleParse multiParse = evaluateArguments(expression, idx+1, end, getClosingBracket(endingChar));
+            final ArgumentParse multiParse = evaluateArguments(expression, idx+1, end, Configuration.getClosingBracket(endingChar));
             final double value = m_functions.apply(identifier, multiParse.arguments);
 			return new Parsing(value, multiParse.extract, '\0');
         }
@@ -380,7 +356,7 @@ public class Calculator {
 		}
 		else {
 			//Identifier is not mapped to a function or constant.
-			throw new RuntimeException("Unknown identifier");
+			throw new RuntimeException("Unknown identifier encountered.");
 		}
     }
 
@@ -405,43 +381,22 @@ public class Calculator {
     }
 
     public String parseOperator(String expression, int start, int end) {
-        int idx = start;
         String operator = null;
-        for (; idx <= end; ++idx) {
+        for (int idx = start; idx <= end; ++idx) {
             final String token = expression.substring(start, idx);
 
             if (m_operators.contains(token)) {
                 operator = token;
             }
-
-            if (idx != end) {
-                final char next = expression.charAt(idx);
-
-                if (isIdentifierChar(next) || Character.isWhitespace(next)) {
-                    break;
-                }
+            if (idx < end && !Configuration.isOperatorChar(expression.charAt(idx))) {
+                break;
             }
         }
+
         if (operator == null) {
             throw new RuntimeException("No operator found.");
         }
 
         return operator;
-    }
-    
-	public static boolean isIdentifierChar(char ch) {
-		return Character.isJavaIdentifierPart(ch) || ch == '_';
-	}
-	
-    public static boolean isOpeningBracket(char ch) {
-        return "([{".indexOf(ch) != -1;
-    }
-
-    public static boolean isClosingBracket(char ch) {
-        return ")]}".indexOf(ch) != -1;
-    }
-
-    public static char getClosingBracket(char opener) {
-        return ")]}".charAt("([{".indexOf(opener));
     }
 }

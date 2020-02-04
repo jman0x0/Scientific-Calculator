@@ -62,4 +62,28 @@ public class Configuration {
      * Lower value bound before transition to 0.
      */
     public static final double SCIENTIFIC_LOWER_BOUND = 10e-308;
+
+    public static boolean isFloatingPoint(char ch) {
+        return Character.isDigit(ch) || ch == '.';
+    }
+
+    public static boolean isIdentifierChar(char ch) {
+        return Character.isJavaIdentifierPart(ch);
+    }
+
+    public static boolean isOperatorChar(char ch) {
+        return !isIdentifierChar(ch) && !Character.isWhitespace(ch);
+    }
+
+    public static boolean isOpeningBracket(char ch) {
+        return "([{".indexOf(ch) != -1;
+    }
+
+    public static boolean isClosingBracket(char ch) {
+        return ")]}".indexOf(ch) != -1;
+    }
+
+    public static char getClosingBracket(char opener) {
+        return ")]}".charAt("([{".indexOf(opener));
+    }
 }

@@ -70,6 +70,23 @@ public class Operator {
         return operation.apply(args);
     }
 
+    /**
+     * Determine if this operator has precedence over the other.
+     * @param other The operator to have it's precedence compared.
+     * @return True if this operator has precedence over the other, else false.
+     */
+    public boolean hasPrecedence(Operator other)
+    {
+        final int rp = other.getPrecedence();
+        //Lower precedence always has priority.
+        if (precedence < rp) {
+            return true;
+        }
+        //Otherwise they must have equivalent precedence and left associativity.
+        //Right associativity with equal precedence has priority.
+        return (precedence == rp) && (other.getAssociativity() == Operator.Associativity.LEFT_TO_RIGHT);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null) {
