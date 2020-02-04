@@ -102,8 +102,8 @@ public class Calculator {
     public double evaluate(String expression)
     {
         //Strip whitespace before processing.
-        final String stripped = expression.replaceAll("\\s", "");
-        return evaluate(stripped, 0, stripped.length());
+        //final String stripped = expression.replaceAll("\\s", "");
+        return evaluate(expression, 0, expression.length());
     }
 
     public double evaluatePostfix(String expression)
@@ -156,7 +156,7 @@ public class Calculator {
      */
     public double evaluate(String expression, int start, int end)
     {
-        return evaluateGrouping(expression, start, end, new ArrayList<Character>()).value;
+        return evaluateGrouping(expression, start, end, new ArrayList<>()).value;
     }
 
     public void processOperator(Stack<Operator> operations, Stack<Double> values) {
@@ -207,8 +207,9 @@ public class Calculator {
         Term.Type previous = null;
         Character closer = null;
         boolean implicitMultiplication = false;
-        
-        while (start < end) {
+
+        int original = start;
+        while ((start = skipWhitespace(expression, start, end)) < end) {
             if (closers.contains(expression.charAt(start))) {
                 closer = expression.charAt(start);
                 break;
@@ -216,9 +217,13 @@ public class Calculator {
             final Term term = extractTerm(expression, start, end);
             final Object backup = term.value;
             final Term.Type type = term.type;
-            
-            boolean implicit = term.type != Term.Type.OPERATOR && implicitMultiplication;
-            if (implicit) {
+            final boolean spaced = original != start;
+
+            final boolean implicit = term.type != Term.Type.OPERATOR && implicitMultiplication;
+            if (implicit && spaced) {
+                throw new RuntimeException("Cannot process two separated operands");
+            }
+            else if (implicit) {
                 term.type = Term.Type.OPERATOR;
                 term.value = "*";
             }
@@ -248,6 +253,7 @@ public class Calculator {
             //Update term and index.
             previous = type;
             start = term.extract;
+            original = start;
         }
         if (!closers.isEmpty() && closer == null) {
             throw new RuntimeException("Closing delimeter not found");
@@ -377,7 +383,14 @@ public class Calculator {
         }
         //Convert string to double.
         final double value = Double.parseDouble(expression.substring(start, idx));
-        return new Parsing(value, idx, '\0');
+
+        if (idx < end && Configuration.isIdentifierChar(expression.charAt(idx))) {
+            final Parsing binding = parseIdentifier(expression, idx, end);
+            return new Parsing(value * binding.value, binding.extract, binding.closer);
+        }
+        else {
+            return new Parsing(value, idx, '\0');
+        }
     }
 
     public String parseOperator(String expression, int start, int end) {
