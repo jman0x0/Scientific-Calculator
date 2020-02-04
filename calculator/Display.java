@@ -216,19 +216,17 @@ public class Display extends VBox {
             if (lineNumber != active && change.isContentChange()) {
                 return null;
             }
-            return change;
-        }));
-        //Listen to changes in text.
-        editor.textProperty().addListener(
-            (observableValue, oldValue, newValue) -> {
-            final StringBuilder builder = new StringBuilder(newValue);
-                //Make sure that the updated text is transformed.
-                for (int i = 0; i < builder.length(); ++i) {
+
+            //Convert
+            final StringBuilder builder = new StringBuilder(change.getText());
+            for (int i = 0; i < builder.length(); ++i) {
                 final String fixed = KeyConverter.converter.replace(""+builder.charAt(i));
                 builder.setCharAt(i, fixed.charAt(0));
             }
-                editor.setText(builder.toString());
-        });
+            change.setText(builder.toString());
+            return change;
+        }));
+
         editor.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
@@ -237,6 +235,16 @@ public class Display extends VBox {
                 if (keyEvent.getCode() == KeyCode.ENTER) {
                     evaluateInput();
                     ++active;
+                }
+                switch (keyEvent.getCode()) {
+                    case UP:
+                        break;
+                    case DOWN:
+                        break;
+                    case ENTER:
+                        evaluateInput();
+                        ++active;
+                        break;
                 }
             }
         });
