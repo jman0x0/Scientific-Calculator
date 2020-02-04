@@ -7,7 +7,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 
@@ -187,8 +186,7 @@ public class Display extends VBox {
      * @param text The text to be added to the editor.
      */
     public void insertText(String text) {
-        final int caret = editor.getCaretPosition();
-        editor.insertText(caret, text);
+        editor.replaceSelection(text);
     }
 
     private int getLineNumber(String text, int position) {
@@ -216,7 +214,6 @@ public class Display extends VBox {
             if (lineNumber != active && change.isContentChange()) {
                 return null;
             }
-
             //Convert
             final StringBuilder builder = new StringBuilder(change.getText());
             for (int i = 0; i < builder.length(); ++i) {
