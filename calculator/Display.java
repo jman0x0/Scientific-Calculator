@@ -15,8 +15,11 @@ import java.text.DecimalFormat;
 
 public class Display extends VBox {
     private int active;
+    private int query;
+    private String currentText;
     private double answer;
     private double memory;
+    
     @FXML
     public TextArea editor;
 
@@ -166,10 +169,10 @@ public class Display extends VBox {
             case "M+":
                 memory += answer;
                 break;
-            case "M÷":
+            case "MÃ·":
                 memory /= answer;
                 break;
-            case "M×":
+            case "MÃ—":
                 memory *= answer;
                 break;
             default:
@@ -204,6 +207,25 @@ public class Display extends VBox {
         final var paragraphs = editor.getParagraphs();
         return paragraphs.get(active).toString();
     }
+    
+    private void updateActive(String value) {
+    	int concern = 0;
+    	final int end = editor.getText().length();
+    	for (int i = 0; i < end; ++i) {
+            if (editor.getText().charAt(i) == '\n') {
+            	concern = i+1;
+            }
+        }
+    	editor.replaceText(concern, end, value);
+    }
+    
+    private int getParagraphCount() {
+    	return editor.getParagraphs().size();
+    }
+    
+    private String getParagraph(int index) {
+    	return editor.getParagraphs().get(index).toString();
+    }
 
     private void attachListeners() {
         //Prevent the user from modifying previous entries.
@@ -214,11 +236,20 @@ public class Display extends VBox {
             if (lineNumber != active && change.isContentChange()) {
                 return null;
             }
-            //Convert
-            final StringBuilder builder = new StringBuilder(change.getText());
-            for (int i = 0; i < builder.length(); ++i) {
-                final String fixed = KeyConverter.converter.replace(""+builder.charAt(i));
-                builder.setCharAt(i, fixed.charAt(0));
+
+            final String addition = change.getText();
+            //Prevent user from skipping a line.
+            final int splicing = addition.indexOf("\n");
+            if (getActiveExpression().isEmpty() && splicing == 0) {
+                return null;
+            }
+
+            //Translate all characters and strings into appropriate symbols.
+            final StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < addition.length(); ++i) {
+                final KeyConverter converter = KeyConverter.converter;
+                final String fixed = converter.replace(String.valueOf(addition.charAt(i)));
+                builder.append(fixed);
             }
             change.setText(builder.toString());
             return change;
@@ -227,16 +258,42 @@ public class Display extends VBox {
         editor.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
+            	final int paragraphs = getParagraphCount();
+            	
                 switch (keyEvent.getCode()) {
                     case UP:
+                    	if (query > 0) {
+                    		if (query + 1 == paragraphs) {
+                    			currentText = getParagraph(query); 
+                    			System.out.println(currentText);
+                    		}
+                    		--query;
+                    		updateActive(getParagraph(query));
+                    	}
+                    	editor.positionCaret(editor.getText().length());
                         break;
                     case DOWN:
+                    	if (query + 1 < paragraphs) {
+                        	++query;
+                    		if (query + 1 == paragraphs) {
+                    			updateActive(currentText);
+                    		}
+                    		else {
+                    			updateActive(getParagraph(query));
+                    		}
+                    	}
+                    	editor.positionCaret(editor.getText().length());
                         break;
                     case ENTER:
                         //Evaluate the expression.
-                        evaluateInput();
-                        ++active;
+                        if (!getActiveExpression().isEmpty()) {
+                            evaluateInput();
+                            active = getLineNumber(editor.getText(), editor.getText().length());
+                            query = active;
+                        }
                         break;
+                    default:
+                    	break;
                 }
             }
         });
