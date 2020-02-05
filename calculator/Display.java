@@ -69,7 +69,6 @@ public class Display extends VBox {
 
         try {
             final String expression = getActiveExpression();
-            System.out.println(expression);
             final double value = calculator.evaluate(expression);
             updateDisplay(value);
 
@@ -195,6 +194,10 @@ public class Display extends VBox {
         editor.replaceSelection(text);
     }
 
+    /**
+     * Query for a previously stored operation.
+     * @param displacement The amount to displace the query.
+     */
     public void moveQuery(int displacement) {
         final int lastParagraph = getLastParagraph();
         final int index = query + displacement;
@@ -203,10 +206,12 @@ public class Display extends VBox {
             return;
         }
 
+        //Moving up operation history, save active text.
         if (displacement < 0 && query == lastParagraph) {
             currentText = getParagraph(query);
         }
 
+        //Moving down operation history, choose appropriate paragraph.
         if (displacement > 0 && request == lastParagraph) {
             updateActive(currentText);
         }
@@ -214,11 +219,18 @@ public class Display extends VBox {
             updateActive(getParagraph(request));
         }
         query = request;
+        //Update the cursor position to the end of the text area.
         Platform.runLater(() -> {
             editor.positionCaret(editor.getText().length());
         });
     }
 
+    /**
+     * Get the number of newlines preceding a index of text.
+     * @param text The characters to evaluate and process.
+     * @param position The ending delimiter to count upto.
+     * @return The number of lines preceding the index.
+     */
     private int getLineNumber(String text, int position) {
         int lineNumber = 0;
         for (int i = 0; i < position; ++i) {
@@ -230,22 +242,19 @@ public class Display extends VBox {
         return lineNumber;
     }
 
+    /**
+     * Get the active expression of the TextArea.
+     * @return The last line/paragraph of the TextArea.
+     */
     private String getActiveExpression() {
         final var paragraphs = editor.getParagraphs();
         return paragraphs.get(active).toString();
     }
 
-    private void updateActive(String value) {
-    	int concern = 0;
-    	final int end = editor.getText().length();
-    	for (int i = 0; i < end; ++i) {
-            if (editor.getText().charAt(i) == '\n') {
-            	concern = i+1;
-            }
-        }
-    	editor.replaceText(concern, end, value);
-    }
-
+    /**
+     * Get the start of the active line.
+     * @return The start(caret position) of the active line.
+     */
     private int getActiveCursor() {
         int concern = 0;
         final int end = editor.getText().length();
@@ -257,10 +266,29 @@ public class Display extends VBox {
         return concern;
     }
 
+    /**
+     * Set the text of the last line/paragraph of the TextArea.
+     * @param value The text the last line will be assigned to.
+     */
+    private void updateActive(String value) {
+        final int start = getActiveCursor();
+        final int end = editor.getText().length();
+        editor.replaceText(start, end, value);
+    }
+
+    /**
+     * Quick way of getting the last paragraph.
+     * @return Index of the last accessible paragraph.
+     */
     private int getLastParagraph() {
     	return editor.getParagraphs().size() - 1;
     }
 
+    /**
+     * Get a paragraph from the active TextArea editor.
+     * @param index The paragraph to retrieve.
+     * @return The requested paragraph from the TextArea.
+     */
     private String getParagraph(int index) {
     	return editor.getParagraphs().get(index).toString();
     }
