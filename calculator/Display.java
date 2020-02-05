@@ -1,5 +1,6 @@
 package calculator;
 
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,6 +13,8 @@ import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Display extends VBox {
     private int active;
@@ -19,7 +22,7 @@ public class Display extends VBox {
     private String currentText;
     private double answer;
     private double memory;
-    
+
     @FXML
     public TextArea editor;
 
@@ -169,10 +172,10 @@ public class Display extends VBox {
             case "M+":
                 memory += answer;
                 break;
-            case "MÃ·":
+            case "M÷":
                 memory /= answer;
                 break;
-            case "MÃ—":
+            case "M×":
                 memory *= answer;
                 break;
             default:
@@ -192,6 +195,30 @@ public class Display extends VBox {
         editor.replaceSelection(text);
     }
 
+    public void moveQuery(int displacement) {
+        final int lastParagraph = getLastParagraph();
+        final int index = query + displacement;
+        final int request = Math.min(lastParagraph, Math.max(0, index));
+        if (query == request) {
+            return;
+        }
+
+        if (displacement < 0 && query == lastParagraph) {
+            currentText = getParagraph(query);
+        }
+
+        if (displacement > 0 && request == lastParagraph) {
+            updateActive(currentText);
+        }
+        else {
+            updateActive(getParagraph(request));
+        }
+        query = request;
+        Platform.runLater(() -> {
+            editor.positionCaret(editor.getText().length());
+        });
+    }
+
     private int getLineNumber(String text, int position) {
         int lineNumber = 0;
         for (int i = 0; i < position; ++i) {
@@ -207,7 +234,7 @@ public class Display extends VBox {
         final var paragraphs = editor.getParagraphs();
         return paragraphs.get(active).toString();
     }
-    
+
     private void updateActive(String value) {
     	int concern = 0;
     	final int end = editor.getText().length();
@@ -218,11 +245,22 @@ public class Display extends VBox {
         }
     	editor.replaceText(concern, end, value);
     }
-    
-    private int getParagraphCount() {
-    	return editor.getParagraphs().size();
+
+    private int getActiveCursor() {
+        int concern = 0;
+        final int end = editor.getText().length();
+        for (int i = 0; i < end; ++i) {
+            if (editor.getText().charAt(i) == '\n') {
+                concern = i+1;
+            }
+        }
+        return concern;
     }
-    
+
+    private int getLastParagraph() {
+    	return editor.getParagraphs().size() - 1;
+    }
+
     private String getParagraph(int index) {
     	return editor.getParagraphs().get(index).toString();
     }
@@ -237,65 +275,72 @@ public class Display extends VBox {
                 return null;
             }
 
+            final String expression = getActiveExpression();
             final String addition = change.getText();
-            //Prevent user from skipping a line.
             final int splicing = addition.indexOf("\n");
-            if (getActiveExpression().isEmpty() && splicing == 0) {
+            if (expression.isEmpty() && splicing == 0) {
+                //Prevent user from skipping a line.
                 return null;
             }
 
-            //Translate all characters and strings into appropriate symbols.
-            final StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < addition.length(); ++i) {
-                final KeyConverter converter = KeyConverter.converter;
-                final String fixed = converter.replace(String.valueOf(addition.charAt(i)));
-                builder.append(fixed);
+            final int start = getActiveCursor();
+            if (caret < start + expression.length() && splicing >= 0) {
+                Platform.runLater(() -> {
+                    final int end = start + expression.length();
+                    editor.positionCaret(end + addition.length());
+                    editor.replaceSelection(addition);
+                });
+                change = null;
             }
-            change.setText(builder.toString());
+            else if (splicing >= 0) {
+                evaluateInput();
+                active = 1 + getLineNumber(oldText, oldText.length());
+                query = active;
+            }
+
             return change;
         }));
 
-        editor.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-            	final int paragraphs = getParagraphCount();
-            	
-                switch (keyEvent.getCode()) {
-                    case UP:
-                    	if (query > 0) {
-                    		if (query + 1 == paragraphs) {
-                    			currentText = getParagraph(query); 
-                    			System.out.println(currentText);
-                    		}
-                    		--query;
-                    		updateActive(getParagraph(query));
-                    	}
-                    	editor.positionCaret(editor.getText().length());
-                        break;
-                    case DOWN:
-                    	if (query + 1 < paragraphs) {
-                        	++query;
-                    		if (query + 1 == paragraphs) {
-                    			updateActive(currentText);
-                    		}
-                    		else {
-                    			updateActive(getParagraph(query));
-                    		}
-                    	}
-                    	editor.positionCaret(editor.getText().length());
-                        break;
-                    case ENTER:
-                        //Evaluate the expression.
-                        if (!getActiveExpression().isEmpty()) {
-                            evaluateInput();
-                            active = getLineNumber(editor.getText(), editor.getText().length());
-                            query = active;
-                        }
-                        break;
-                    default:
-                    	break;
+        editor.textProperty().addListener(((observableValue, oldText, newText) -> {
+            //Translate all characters and strings into appropriate symbols.
+            final StringBuilder builder = new StringBuilder(editor.getText());
+            int delta = newText.length() - oldText.length();
+            for (var keypair : KeyConverter.converter.entrySet()) {
+                final String key = keypair.getKey();
+                final String value = keypair.getValue();
+                int index = 0;
+
+                //Replace all characters.
+                while ((index = builder.indexOf(key, index)) != -1) {
+                    builder.delete(index, index+key.length());
+                    builder.insert(index, value);
+                    index += key.length();
+                    delta += value.length() - key.length();
                 }
             }
-        });
+            final int caret = editor.getCaretPosition() + delta;
+            //Can't modify text to a shorter length while here,
+            //otherwise an IllegalArgumentException is thrown internally by JFX indicating out of bounds access.
+            //Thus, we temporarily delay modification.
+            Platform.runLater(() -> {
+                final var formatter = editor.getTextFormatter();
+                editor.setTextFormatter(null);
+                editor.setText(builder.toString());
+                editor.setTextFormatter(formatter);
+                editor.positionCaret(caret);
+            });
+        }));
+        editor.setOnKeyPressed((keyEvent ->  {
+            switch (keyEvent.getCode()) {
+                case UP:
+                    moveQuery(-1);
+                    break;
+                case DOWN:
+                    moveQuery(1);
+                    break;
+                default:
+                    break;
+            }
+        }));
     }
 }

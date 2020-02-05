@@ -11,5 +11,6 @@ public class Constants extends HashMap<String, Double> {
 		JCONSTANTS.put("pi", 3.14159265358979323846);
 		JCONSTANTS.put("e", 2.71828182845904523536);
 		JCONSTANTS.put("φ", 1.61803398874989484820);
+		JCONSTANTS.put("phi", 1.61803398874989484820);
 	}
 }
