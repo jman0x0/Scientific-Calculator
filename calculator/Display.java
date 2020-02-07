@@ -293,43 +293,79 @@ public class Display extends VBox {
     	return editor.getParagraphs().get(index).toString();
     }
 
+    /**
+     * Determine whether a string corresponds to a binary operator.
+     * @param identifier The name of the operator.
+     * @return True if the identifier maps to a binary operator, else false.
+     */
+    private boolean isBinaryOperator(String identifier) {
+        return OperatorList.PEMDAS.get(identifier, 2) != null;
+    }
+
+    /**
+     * Trim off excess newlines past the preservation point.
+     * @param value The string to be trimmed.
+     * @param preserve The index to search for newlines from.
+     * @return The same string if there are no newlines, else a string that has been trimmed to the next newline.
+     */
+    public String trimNewlines(String value, int preserve) {
+        final int newline = value.indexOf('\n', preserve);
+
+        return newline == -1 ? value : value.substring(0, newline);
+    }
+
     private void attachListeners() {
         //Prevent the user from modifying previous entries.
         editor.setTextFormatter(new TextFormatter<String>((TextFormatter.Change change) -> {
             final String oldText = change.getControlText();
             final int caret = change.getRangeStart();
             final int lineNumber = getLineNumber(oldText, caret);
+
+            //Prevent user from editing previously entered lines.
             if (lineNumber != active && change.isContentChange()) {
                 return null;
             }
 
             final String expression = getActiveExpression();
             final String addition = change.getText();
-            final int splicing = addition.indexOf("\n");
-            if (expression.isEmpty() && splicing == 0) {
+            final int newline = addition.indexOf("\n");
+            if (expression.isEmpty() && newline == 0) {
                 //Prevent user from skipping a line.
                 return null;
             }
 
             final int start = getActiveCursor();
-            if (caret < start + expression.length() && splicing >= 0) {
+            if (caret < start + expression.length() && newline >= 0) {
+                change.setText(addition.substring(0, newline));
                 Platform.runLater(() -> {
-                    final int end = start + expression.length();
-                    editor.positionCaret(end + addition.length());
-                    editor.replaceSelection(addition);
+                    //Schedule newline and thus expression evaluation later.
+                    final String trailing = addition.substring(newline);
+                    editor.appendText(trimNewlines(trailing, 1));
+                    editor.positionCaret(editor.getLength());
                 });
-                change = null;
             }
-            else if (splicing >= 0) {
-                evaluateInput();
-                active = 1 + getLineNumber(oldText, oldText.length());
-                query = active;
+            else if (newline >= 0) {
+                change.setText(trimNewlines(addition, newline + 1));
+                Platform.runLater(() -> {
+                    //Evaluate input after text has been changed.
+                    evaluateInput();
+                    active++;
+                    query = active;
+                });
             }
-
+            if (expression.isEmpty() && isBinaryOperator(addition)) {
+                change.setText("ANS" + change.getText());
+                Platform.runLater(() -> {
+                    editor.positionCaret(editor.getLength());
+                });
+            }
             return change;
         }));
 
         editor.textProperty().addListener(((observableValue, oldText, newText) -> {
+            if (oldText.equals(newText)) {
+                return;
+            }
             //Translate all characters and strings into appropriate symbols.
             final StringBuilder builder = new StringBuilder(editor.getText());
             int delta = newText.length() - oldText.length();
@@ -346,25 +382,34 @@ public class Display extends VBox {
                     delta += value.length() - key.length();
                 }
             }
-            final int caret = editor.getCaretPosition() + delta;
+
+            if (newText.equals(builder.toString())) {
+               return;
+            }
             //Can't modify text to a shorter length while here,
             //otherwise an IllegalArgumentException is thrown internally by JFX indicating out of bounds access.
             //Thus, we temporarily delay modification.
+            final int caret = editor.getCaretPosition() + delta;
             Platform.runLater(() -> {
                 final var formatter = editor.getTextFormatter();
-                editor.setTextFormatter(null);
+                editor.setTextFormatter(null); //Override text formatter.
                 editor.setText(builder.toString());
                 editor.setTextFormatter(formatter);
                 editor.positionCaret(caret);
             });
         }));
+
         editor.setOnKeyPressed((keyEvent ->  {
             switch (keyEvent.getCode()) {
                 case UP:
-                    moveQuery(-1);
+                    if (!keyEvent.isControlDown() && !keyEvent.isShiftDown()) {
+                        moveQuery(-1);
+                    }
                     break;
                 case DOWN:
-                    moveQuery(1);
+                    if (!keyEvent.isControlDown() && !keyEvent.isShiftDown()) {
+                        moveQuery(1);
+                    }
                     break;
                 default:
                     break;
