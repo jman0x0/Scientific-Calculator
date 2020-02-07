@@ -1,7 +1,6 @@
 package calculator;
 
 import java.util.HashMap;
-import java.util.regex.Pattern;
 
 public class KeyConverter extends HashMap<String, String> {
     public static final KeyConverter converter;

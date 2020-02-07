@@ -1,20 +1,15 @@
 package calculator;
 
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
-
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Display extends VBox {
     private int active;
@@ -315,13 +310,18 @@ public class Display extends VBox {
     }
 
     private void attachListeners() {
-        //Prevent the user from modifying previous entries.
+        attachTextFormatter();
+        attachTextConverter();
+        attachKeyListener();
+    }
+
+    private void attachTextFormatter() {
         editor.setTextFormatter(new TextFormatter<String>((TextFormatter.Change change) -> {
             final String oldText = change.getControlText();
             final int caret = change.getRangeStart();
             final int lineNumber = getLineNumber(oldText, caret);
 
-            //Prevent user from editing previously entered lines.
+            //Prevent the user from modifying previous entries.
             if (lineNumber != active && change.isContentChange()) {
                 return null;
             }
@@ -361,11 +361,10 @@ public class Display extends VBox {
             }
             return change;
         }));
+    }
 
+    private void attachTextConverter() {
         editor.textProperty().addListener(((observableValue, oldText, newText) -> {
-            if (oldText.equals(newText)) {
-                return;
-            }
             //Translate all characters and strings into appropriate symbols.
             final StringBuilder builder = new StringBuilder(editor.getText());
             int delta = newText.length() - oldText.length();
@@ -384,7 +383,7 @@ public class Display extends VBox {
             }
 
             if (newText.equals(builder.toString())) {
-               return;
+                return;
             }
             //Can't modify text to a shorter length while here,
             //otherwise an IllegalArgumentException is thrown internally by JFX indicating out of bounds access.
@@ -398,7 +397,9 @@ public class Display extends VBox {
                 editor.positionCaret(caret);
             });
         }));
+    }
 
+    private void attachKeyListener() {
         editor.setOnKeyPressed((keyEvent ->  {
             switch (keyEvent.getCode()) {
                 case UP:
