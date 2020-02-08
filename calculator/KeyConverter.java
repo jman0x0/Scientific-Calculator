@@ -22,6 +22,8 @@ public class KeyConverter extends HashMap<String, String> {
 
         converter.put("*", "×");
         converter.put("/", "÷");
+        converter.put("<=", "≤");
+        converter.put(">=", "≥");
         converter.put("pi", "π");
         converter.put("phi", "φ");
     }

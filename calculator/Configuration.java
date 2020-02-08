@@ -29,6 +29,16 @@ public class Configuration {
     public static final int SCREEN_HEIGHT = ASPECT_Y * FACTOR;
 
     /**
+     * The minimum amount of editor entries to be viewable at once.
+     */
+    public static final int DISPLAY_LINES = 4;
+
+    /**
+     * The minimum amount of characters inside of a equation without line breaking.
+     */
+    public static final int DISPLAY_CHARACTERS = 20;
+
+    /**
      * Portion of the screen dedicated towards the display.
      */
     public static final double DISPLAY_RESERVATION = 1/3.;

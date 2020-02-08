@@ -88,8 +88,19 @@ public class Display extends VBox {
      * Clear the display's editor and output fields.
      */
     public void clear() {
-        editor.setText("");
+        setEditorText("");
         output.setText("0");
+        active = 0;
+        query = 0;
+    }
+
+    /**
+     * Completely clear and reset the display's contents and memory.
+     */
+    public void reset() {
+        clear();
+        answer = 0;
+        memory = 0;
     }
 
     /**
@@ -112,9 +123,12 @@ public class Display extends VBox {
         final double reservedHeight = height * Configuration.DISPLAY_RESERVATION;
         super.setPrefHeight(reservedHeight);
 
-        final long fontSize = Math.round(Math.min(width/16, reservedHeight/6));
+        final double LINE_PADDING = 1.4;
+        final double optimalWidth = width / Configuration.DISPLAY_CHARACTERS;
+        final double optimalHeight = reservedHeight / (Configuration.DISPLAY_LINES+1) / LINE_PADDING;
+        final long fontSize = Math.round(Math.min(optimalWidth, optimalHeight));
         status.setStyle("-fx-font-size:" + fontSize*2/3);
-        editor.setStyle("-fx-font-size:" + fontSize*3/4);
+        editor.setStyle("-fx-font-size:" + fontSize);
         output.setStyle("-fx-font-size:" + fontSize);
     }
 
@@ -150,6 +164,8 @@ public class Display extends VBox {
         switch (command) {
             case "=":
                 evaluateInput();
+                break;
+            case "2ND":
                 break;
             case "AC":
                 clear();
@@ -218,6 +234,13 @@ public class Display extends VBox {
         Platform.runLater(() -> {
             editor.positionCaret(editor.getText().length());
         });
+    }
+
+    public void setEditorText(String text) {
+        final var formatter = editor.getTextFormatter();
+        editor.setTextFormatter(null); //Override text formatter.
+        editor.setText(text);
+        editor.setTextFormatter(formatter);
     }
 
     /**
@@ -390,10 +413,7 @@ public class Display extends VBox {
             //Thus, we temporarily delay modification.
             final int caret = editor.getCaretPosition() + delta;
             Platform.runLater(() -> {
-                final var formatter = editor.getTextFormatter();
-                editor.setTextFormatter(null); //Override text formatter.
-                editor.setText(builder.toString());
-                editor.setTextFormatter(formatter);
+                setEditorText(builder.toString());
                 editor.positionCaret(caret);
             });
         }));

@@ -31,11 +31,17 @@ public class OperatorList {
         PEMDAS.add("<=", 6, 2, (args) -> {
             return args.get(0) <= args.get(1) ? 1. : 0.;
         });
+        PEMDAS.add("≤", 6, 2, (args) -> {
+            return args.get(0) <= args.get(1) ? 1. : 0.;
+        });
         PEMDAS.add(">", 6, 2, (args) -> {
             return args.get(0) > args.get(1) ? 1. : 0.;
         });
         PEMDAS.add(">=", 6, 2, (args) -> {
             return args.get(0) >= args.get(1) ? 1. : 0.;
+        });
+        PEMDAS.add("≥", 6, 2, (args) -> {
+            return args.get(0) <= args.get(1) ? 1. : 0.;
         });
         PEMDAS.add("+", 5, 2, (args) -> {
             return args.get(0) + args.get(1);
@@ -90,10 +96,16 @@ public class OperatorList {
         IMMEDIATE.add("<=", 1, 2, (args) -> {
             return args.get(0) <= args.get(1) ? 1. : 0.;
         });
+        IMMEDIATE.add("≤", 1, 2, (args) -> {
+            return args.get(0) <= args.get(1) ? 1. : 0.;
+        });
         IMMEDIATE.add(">", 1, 2, (args) -> {
             return args.get(0) > args.get(1) ? 1. : 0.;
         });
         IMMEDIATE.add(">=", 1, 2, (args) -> {
+            return args.get(0) >= args.get(1) ? 1. : 0.;
+        });
+        IMMEDIATE.add("≥", 1, 2, (args) -> {
             return args.get(0) >= args.get(1) ? 1. : 0.;
         });
         IMMEDIATE.add("+", 1, 2, (args) -> {
