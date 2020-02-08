@@ -165,8 +165,6 @@ public class Display extends VBox {
             case "=":
                 evaluateInput();
                 break;
-            case "2ND":
-                break;
             case "AC":
                 clear();
                 break;

@@ -203,7 +203,10 @@ public class Functions {
 			return 0.5 * (Math.log(1+x) - Math.log(1-x));
 		});
 		JMATH.emplace("log", 1, (args) -> {
-			return Math.log(args.get(0));
+			return Math.log10(args.get(0));
+		});
+		JMATH.emplace("exp", 1, (args) -> {
+			return Math.exp(args.get(0));
 		});
 		JMATH.emplace("ln", 1, (args) -> {
 			return Math.log(args.get(0));

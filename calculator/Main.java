@@ -8,7 +8,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.beans.value.ChangeListener;
 
@@ -34,10 +38,18 @@ public class Main extends Application {
         primaryStage.heightProperty().addListener(dimensionChange);
         primaryStage.widthProperty().addListener(dimensionChange);
 
+        primaryStage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
+            if (!display.editor.isFocused()) {
+                if (!event.isAltDown() && !event.isShiftDown() && !event.isShortcutDown()) {
+                    display.editor.requestFocus();
+                }
+            }
+        });
+
         keypad.listenForKey(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                final Button button = (Button)actionEvent.getSource();
+                final ButtonBase button = (ButtonBase)actionEvent.getSource();
                 final String command = button.getText();
 
                 switch (command) {
@@ -49,6 +61,9 @@ public class Main extends Application {
                         break;
                     case "√x":
                         display.insertText("√");
+                        break;
+                    case "2ND":
+                        keypad.shiftButtons();
                         break;
                     default:
                         display.processCommand(command);
@@ -65,11 +80,11 @@ public class Main extends Application {
         //Load and set the window's icon.
         primaryStage.getIcons().addAll(new Image(getClass().getResourceAsStream("../media/icon64x64.png")),
                                        new Image(getClass().getResourceAsStream("../media/icon48x48.png")));
-        final Main controller = loader.getController();
-        controller.attachListeners(primaryStage);
 
         primaryStage.setTitle("Calculator");
         primaryStage.setScene(new Scene(root, Configuration.SCREEN_WIDTH, Configuration.SCREEN_HEIGHT));
+        final Main controller = loader.getController();
+        controller.attachListeners(primaryStage);
         primaryStage.show();
     }
 
