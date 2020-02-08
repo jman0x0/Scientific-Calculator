@@ -73,7 +73,6 @@ public class Keypad extends GridPane {
     }
 
     public void shiftButtons() {
-        System.out.println("SHIFT");
         for (Node node : getChildren()) {
             if (node instanceof ShiftableButton) {
                 ((ShiftableButton) node).shiftState();

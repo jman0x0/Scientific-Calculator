@@ -14,4 +14,4 @@ This is a project that uses Java and JavaFX to create and design a graphical sci
 | Custom User Functions      | :x:                |
 
 ## Output
-![Graphical Calculator Image](example/running_output.png)
+![Graphical Calculator Image](example/output.png)

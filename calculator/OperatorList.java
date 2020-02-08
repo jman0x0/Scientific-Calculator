@@ -25,6 +25,12 @@ public class OperatorList {
         PEMDAS.add("==", 6, 2, (args) -> {
             return args.get(0).equals(args.get(1)) ? 1. : 0.;
         });
+        PEMDAS.add("=", 6, 2, (args) -> {
+            return args.get(0).equals(args.get(1)) ? 1. : 0.;
+        });
+        PEMDAS.add("≠", 6, 2, (args) -> {
+            return args.get(0).equals(args.get(1)) ? 0. : 1.;
+        });
         PEMDAS.add("<", 6, 2, (args) -> {
            return args.get(0) < args.get(1) ? 1. : 0.;
         });

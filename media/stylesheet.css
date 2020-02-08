@@ -38,13 +38,19 @@
 
 .label {
     -fx-font-family: Gold;
-    -fx-font-size: 1.5em;
     -fx-alignment: BOTTOM-LEFT;
 }
 
 .button {
+    -fx-padding: 0 0 0 0;
     -fx-font-family: Gold;
-    -fx-font-size: 2em;
+    -fx-max-height: infinity;
+    -fx-max-width: infinity;
+}
+
+.toggle-button {
+    -fx-padding: 0 0 0 0;
+    -fx-font-family: Gold;
     -fx-max-height: infinity;
     -fx-max-width: infinity;
 }
@@ -68,6 +74,20 @@
 
 #keypad_digit {
 
+}
+
+#keypad_shift {
+    -fx-background-color: linear-gradient(#dcd7a6, #dcd682);
+}
+#keypad_shift:hover {
+    -fx-background-color: linear-gradient(#ebe6b2, #ebe590);
+}
+#keypad_shift:pressed {
+    -fx-background-color: linear-gradient(#e1d877, Gold);
+}
+#keypad_shift:selected {
+    -fx-background-color: linear-gradient(#e1d877, Gold);
+    -fx-text-fill: Brown;
 }
 
 #keypad_operator {
