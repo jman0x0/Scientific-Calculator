@@ -49,6 +49,12 @@ public class OperatorList {
         PEMDAS.add("≥", 6, 2, (args) -> {
             return args.get(0) >= args.get(1) ? 1. : 0.;
         });
+        PEMDAS.add("&&", 6, 2, (args) -> {
+            return args.get(0) != 0 && args.get(1) != 0 ? 1. : 0.;
+        });
+        PEMDAS.add("||", 6, 2, (args) -> {
+            return args.get(0) != 0 || args.get(1) != 0 ? 1. : 0.;
+        });
         PEMDAS.add("+", 5, 2, (args) -> {
             return args.get(0) + args.get(1);
         });

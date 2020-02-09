@@ -55,6 +55,68 @@
     -fx-max-width: infinity;
 }
 
+.menu-item:hover {
+    -fx-background-color: rgba(48, 135, 255, 0.67);
+}
+
+.menu-item {
+    -fx-background-color: transparent;
+}
+
+.menu-item .label:disabled {
+    -fx-opacity: 1.0;
+}
+
+.menu-item:focused,
+.menu-item:hover {
+    -fx-background-color: rgba(48, 135, 255, 0.67);
+}
+
+.menu-item .label,
+.menu-item:focused .label,
+.menu-item:hover .label {
+    -fx-text-fill: white;
+}
+
+.radio-menu-item,
+.radio-menu-item:hover {
+    -fx-mark-color: white;
+    -fx-focused-mark-color: white;
+}
+
+.context-menu {
+    -fx-background-image: url("keypad_texture.png");
+}
+
+#settings {
+    -fx-graphic: url("settings_icon32x32.png");
+    -fx-font-family: Gold;
+    -fx-background-color: transparent;
+    -fx-padding: 0 0 0 0;
+    -fx-background-image: none;
+}
+
+#settings .label {
+    -fx-label-padding: 0 0 0 0;
+    -fx-padding: 0.1em 0.1em 0.1em 0.1em;
+}
+#settings:hover {
+    -fx-effect: innershadow(gaussian, rgba(64, 64, 64, 0.334), 8, 0.667, 0, 0);
+}
+#settings:showing {
+    -fx-background-image: url("keypad_texture.png");
+    -fx-effect: innershadow(gaussian, rgba(64, 64, 64, 0.334), 8, 0.667, 0, 0);
+}
+
+/* Prevent dropdown arrow from appearing on settings drop button. */
+#settings > .arrow-button {
+    -fx-padding: 0;
+}
+#settings > .arrow-button > .arrow {
+    -fx-padding: 0;
+}
+
+
 #keypad {
     -fx-background-image: url("keypad_texture.png");
     -fx-background-repeat: stretch;
@@ -77,17 +139,16 @@
 }
 
 #keypad_shift {
-    -fx-background-color: linear-gradient(#dcd7a6, #dcd682);
+    -fx-background-color: linear-gradient(#ebda73, #ebd33f);
 }
 #keypad_shift:hover {
-    -fx-background-color: linear-gradient(#ebe6b2, #ebe590);
+    -fx-background-color: linear-gradient(#ebe2a0, #ebd55b);
 }
 #keypad_shift:pressed {
     -fx-background-color: linear-gradient(#e1d877, Gold);
 }
 #keypad_shift:selected {
-    -fx-background-color: linear-gradient(#e1d877, Gold);
-    -fx-text-fill: Brown;
+    -fx-background-color: linear-gradient(Gold, #aa8600);
 }
 
 #keypad_operator {

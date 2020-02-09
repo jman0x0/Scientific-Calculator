@@ -29,7 +29,7 @@
     <ShiftableButton GridPane.columnIndex="3" GridPane.rowIndex="2">7</ShiftableButton>
     <ShiftableButton GridPane.columnIndex="4" GridPane.rowIndex="2">8</ShiftableButton>
     <ShiftableButton GridPane.columnIndex="5" GridPane.rowIndex="2">9</ShiftableButton>
-    <ShiftableButton GridPane.columnIndex="6" id="keypad_operator" GridPane.rowIndex="2">^ =</ShiftableButton>
+    <ShiftableButton GridPane.columnIndex="6" id="keypad_operator" GridPane.rowIndex="2">^ ==</ShiftableButton>
     <ShiftableButton GridPane.columnIndex="7" id="keypad_operator" GridPane.rowIndex="2">% ≠</ShiftableButton>
     <ShiftableButton GridPane.columnIndex="8" id="keypad_operator" GridPane.rowIndex="2" GridPane.rowSpan="2">ANS</ShiftableButton>
     <ShiftableButton GridPane.columnIndex="0" id="keypad_function" GridPane.rowIndex="3">x^2</ShiftableButton>
@@ -55,6 +55,6 @@
     <ShiftableButton GridPane.columnIndex="3" id="keypad_operator" GridPane.rowIndex="5">-</ShiftableButton>
     <ShiftableButton GridPane.columnIndex="4" GridPane.rowIndex="5">0</ShiftableButton>
     <ShiftableButton GridPane.columnIndex="5" id="keypad_operator" GridPane.rowIndex="5">.</ShiftableButton>
-    <ShiftableButton GridPane.columnIndex="6" id="keypad_operator" GridPane.rowIndex="5">,</ShiftableButton>
-    <ShiftableButton GridPane.columnIndex="7" id="keypad_operator" GridPane.rowIndex="5">!</ShiftableButton>
+    <ShiftableButton GridPane.columnIndex="6" id="keypad_operator" GridPane.rowIndex="5">, &amp;&amp;</ShiftableButton>
+    <ShiftableButton GridPane.columnIndex="7" id="keypad_operator" GridPane.rowIndex="5">! ||</ShiftableButton>
 </fx:root>

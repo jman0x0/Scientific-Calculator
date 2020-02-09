@@ -14,7 +14,7 @@
             <items>
                 <RadioMenuItem mnemonicParsing="false" text="Degrees" toggleGroup="$angle"/>
                 <RadioMenuItem mnemonicParsing="false" text="Radians" selected="true" toggleGroup="$angle"/>
-                <SeparatorMenuItem/>
+                <SeparatorMenuItem text="Hey"/>
                 <RadioMenuItem mnemonicParsing="false" text="Decimal" selected="true" toggleGroup="$mode"/>
                 <RadioMenuItem mnemonicParsing="false" text="Fraction" toggleGroup="$mode"/>
             </items>
