@@ -10,7 +10,7 @@ This is a project that uses Java and JavaFX to create and design a graphical sci
 | Named Constants            | :white_check_mark: |
 | Resizable Window           | :white_check_mark: |
 | Operation History          | :white_check_mark: |
-| Editable Settings          | :x:                |
+| Editable Settings          | :white_check_mark: |
 | Custom User Functions      | :x:                |
 
 ## Output

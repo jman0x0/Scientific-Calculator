@@ -3,6 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.shape.Line?>
 <fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml">
     <fx:define>
         <ToggleGroup fx:id="angle"/>
@@ -14,7 +15,7 @@
             <items>
                 <RadioMenuItem mnemonicParsing="false" text="Degrees" toggleGroup="$angle"/>
                 <RadioMenuItem mnemonicParsing="false" text="Radians" selected="true" toggleGroup="$angle"/>
-                <SeparatorMenuItem text="Hey"/>
+                <SeparatorMenuItem/>
                 <RadioMenuItem mnemonicParsing="false" text="Decimal" selected="true" toggleGroup="$mode"/>
                 <RadioMenuItem mnemonicParsing="false" text="Fraction" toggleGroup="$mode"/>
             </items>
