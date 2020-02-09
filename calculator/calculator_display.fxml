@@ -4,7 +4,22 @@
 <?import javafx.scene.layout.*?>
 
 <fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml">
-    <TextArea fx:id="editor" wrapText="true"/>
+    <fx:define>
+        <ToggleGroup fx:id="angle"/>
+        <ToggleGroup fx:id="mode"/>
+    </fx:define>
+    <StackPane VBox.vgrow="ALWAYS">
+        <TextArea fx:id="editor" wrapText="true"/>
+        <MenuButton fx:id="settings" StackPane.alignment="TOP_LEFT">
+            <items>
+                <RadioMenuItem mnemonicParsing="false" text="Degrees" toggleGroup="$angle"/>
+                <RadioMenuItem mnemonicParsing="false" text="Radians" selected="true" toggleGroup="$angle"/>
+                <SeparatorMenuItem/>
+                <RadioMenuItem mnemonicParsing="false" text="Decimal" selected="true" toggleGroup="$mode"/>
+                <RadioMenuItem mnemonicParsing="false" text="Fraction" toggleGroup="$mode"/>
+            </items>
+        </MenuButton>
+    </StackPane>
     <StackPane VBox.vgrow="ALWAYS">
         <Label fx:id="status" StackPane.alignment="BOTTOM_LEFT">MR: 0</Label>
         <TextField fx:id="output" editable="false" StackPane.alignment="BOTTOM_RIGHT">0</TextField>

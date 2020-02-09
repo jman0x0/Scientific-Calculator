@@ -19,13 +19,28 @@ public class Functions {
 			this.arguments = args;
 		}
 	}
-	
+
+	public enum Angle {
+		DEGREES,
+		RADIANS
+	}
+
+	private Angle m_angle;
+
 	private Map<String, ArrayList<Functor>> m_functions;
 	
 	public Functions() {
 		m_functions = new HashMap<String, ArrayList<Functor>>();
 	}
-	
+
+	public void setAngle(Angle angle) {
+		m_angle = angle;
+	}
+
+	Angle getAngle() {
+		return m_angle;
+	}
+
 	public int size() {
 		return m_functions.size();
 	}
@@ -136,6 +151,13 @@ public class Functions {
 		return m_functions.isEmpty();
 	}
 
+	public double angleType(double value) {
+		if (m_angle == Angle.RADIANS) {
+			return value;
+		}
+		return value * (Math.PI/180.0);
+	}
+
 	/**
 	 * Default set of functions that are available within the java library plus a few more.
 	 */
@@ -164,7 +186,7 @@ public class Functions {
 			return (double)Math.round(args.get(0));
 		});
 		JMATH.emplace("sin", 1, (args) -> {
-			return Math.sin(args.get(0));
+			return Math.sin(JMATH.angleType(args.get(0)));
 		});
 		JMATH.emplace("sinh", 1, (args) -> {
 			return Math.sinh(args.get(0));
@@ -177,7 +199,7 @@ public class Functions {
 			return Math.log(x + Math.sqrt(1.0 + x*x));
 		});
 		JMATH.emplace("cos", 1, (args) -> {
-			return Math.cos(args.get(0));
+			return Math.cos(JMATH.angleType(args.get(0)));
 		});
 		JMATH.emplace("cosh", 1, (args) -> {
 			return Math.cosh(args.get(0));
@@ -190,7 +212,7 @@ public class Functions {
 			return Math.log(x + Math.sqrt(x+1)*Math.sqrt(x-1));
 		});
 		JMATH.emplace("tan", 1, (args) -> {
-			return Math.tan(args.get(0));
+			return Math.tan(JMATH.angleType(args.get(0)));
 		});
 		JMATH.emplace("tanh", 1, (args) -> {
 			return Math.tanh(args.get(0));

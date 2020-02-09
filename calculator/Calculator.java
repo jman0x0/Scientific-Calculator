@@ -10,6 +10,7 @@ public class Calculator {
     private OperatorList m_operators;
 	private Constants m_constants;
 
+
     /**
      * Term represents an OPERAND or OPERATOR and appropriate extracted value and index.
      */
@@ -204,10 +205,13 @@ public class Calculator {
     	//iff they have lower precedence than sequential operators. 
         Stack<Operator> operations = new Stack<>();
         Stack<Double> values = new Stack<>();
-        Term.Type previous = null;
         Character closer = null;
+        final int UNARY = 1;
+        final int BINARY = 2;
+
         boolean implicitMultiplication = false;
 
+        int futureOperands = UNARY;
         int original = start;
         while ((start = skipWhitespace(expression, start, end)) < end) {
             if (closers.contains(expression.charAt(start))) {
@@ -216,7 +220,6 @@ public class Calculator {
             }
             final Term term = extractTerm(expression, start, end);
             final Object backup = term.value;
-            final Term.Type type = term.type;
             final boolean spaced = original != start;
 
             final boolean implicit = term.type != Term.Type.OPERATOR && implicitMultiplication;
@@ -230,19 +233,22 @@ public class Calculator {
             else if (term.type == Term.Type.OPERAND) {
             	values.push((Double)term.value);
             	implicitMultiplication = true;
+            	futureOperands = BINARY;
             }
 
             if (term.type == Term.Type.OPERATOR) {
-            	final int operands = (previous != Term.Type.OPERAND ? 1 : 2);
-                final Operator futureOp = m_operators.getPreferenceOrAny((String)term.value, operands);
-                final int UNARY = 1;
+                final Operator futureOp = m_operators.getPreferenceOrAny((String)term.value, futureOperands);
+                final boolean futureUnary = futureOp.getOperands() == UNARY;
 
-                if (implicitMultiplication && futureOp.getOperands() == UNARY && futureOp.getAssociativity() == Operator.Associativity.RIGHT_TO_LEFT) {
+                if (!futureUnary) {
+                    futureOperands = UNARY;
+                }
+                if (implicitMultiplication && futureUnary && futureOp.getAssociativity() == Operator.Associativity.RIGHT_TO_LEFT) {
                 	processNextOperator(operations, values, m_operators.getPreferenceOrAny("*", 2));
                 	implicitMultiplication = false;
                 }
                 processNextOperator(operations, values, futureOp);
-                if (futureOp.getOperands() != UNARY) {
+                if (!futureUnary) {
                     implicitMultiplication = false;
                 }
             }
@@ -251,12 +257,11 @@ public class Calculator {
                 implicitMultiplication = true;
             }
             //Update term and index.
-            previous = type;
             start = term.extract;
             original = start;
         }
         if (!closers.isEmpty() && closer == null) {
-            throw new RuntimeException("Closing delimeter not found");
+            throw new RuntimeException("Closing delimiter not found");
         }
 
         //Pop off remaining operations.

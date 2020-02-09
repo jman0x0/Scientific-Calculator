@@ -3,10 +3,7 @@ package calculator;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -26,6 +23,12 @@ public class Display extends VBox {
 
     @FXML
     public Label status;
+
+    @FXML
+    public ToggleGroup angle;
+
+    @FXML
+    public ToggleGroup mode;
 
     @FXML
     public void initialize() {
@@ -53,14 +56,30 @@ public class Display extends VBox {
         return answer;
     }
 
+
+    public Calculator loadCalculator() {
+        final Calculator calculator = new Calculator();
+
+        final String angleString = ((RadioMenuItem)angle.getSelectedToggle()).getText();
+        if (angleString.equalsIgnoreCase("DEGREES")) {
+            calculator.getFunctions().setAngle(Functions.Angle.DEGREES);
+        }
+        else {
+            calculator.getFunctions().setAngle(Functions.Angle.RADIANS);
+        }
+
+        calculator.getConstants().put("ANS", answer);
+        calculator.getConstants().put("MR", memory);
+
+        return calculator;
+    }
+
     /**
      * Evaluate the input stored inside the editor field.
      * @return The value evaluated by the calculator.
      */
     public double evaluateInput() {
-        final Calculator calculator = new Calculator();
-        calculator.getConstants().put("ANS", answer);
-        calculator.getConstants().put("MR", memory);
+        final Calculator calculator = loadCalculator();
 
         try {
             final String expression = getActiveExpression();
@@ -79,8 +98,17 @@ public class Display extends VBox {
      * @param value The value for the output field.
      */
     public void updateDisplay(double value) {
-        final String formatted = formatDouble(value, Configuration.OUTPUT_DIGIT_COUNT);
-        output.setText(formatted);
+        final String modeString  = ((RadioMenuItem)mode.getSelectedToggle()).getText();
+        final boolean useScientific = Math.abs(value) > Configuration.RATIONAL_UPPER_BOUND
+                                    ||Math.abs(value) < Configuration.RATIONAL_LOWER_BOUND;
+
+        if (useScientific || modeString.equalsIgnoreCase("DECIMAL")) {
+            final String formatted = formatDouble(value, Configuration.OUTPUT_DIGIT_COUNT);
+            output.setText(formatted);
+        }
+        else {
+            output.setText(Rational.valueOf(value).toString());
+        }
         answer = value;
     }
 
@@ -331,9 +359,16 @@ public class Display extends VBox {
     }
 
     private void attachListeners() {
+        attachModeListener();
         attachTextFormatter();
         attachTextConverter();
         attachKeyListener();
+    }
+
+    private void attachModeListener() {
+        mode.selectedToggleProperty().addListener(((observableValue, oldToggle, newToggle) -> {
+            updateDisplay(answer);
+        }));
     }
 
     private void attachTextFormatter() {

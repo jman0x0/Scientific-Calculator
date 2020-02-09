@@ -51,7 +51,7 @@ public class Configuration {
     /**
      * Maximum amount of decimal places used to display the result of an expression.
      */
-    public static final int OUTPUT_DIGIT_COUNT = 10;
+    public static final int OUTPUT_DIGIT_COUNT = 12;
 
     /**
      * Maximum amount of decimal places used to display the memory's contents.
@@ -66,7 +66,12 @@ public class Configuration {
     /**
      * Lower value bound before transitioning to scientific format.
      */
-    public static final double STANDARD_LOWER_BOUND = 10e-6;
+    public static final double STANDARD_LOWER_BOUND = 10e-7;
+
+    public static final double RATIONAL_UPPER_BOUND = 10e14;
+
+
+    public static final double RATIONAL_LOWER_BOUND = 10e-14;
 
     /**
      * Lower value bound before transition to 0.
@@ -96,4 +101,5 @@ public class Configuration {
     public static char getClosingBracket(char opener) {
         return ")]}".charAt("([{".indexOf(opener));
     }
+
 }
