@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Text?>
 <fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml">
     <fx:define>
         <ToggleGroup fx:id="angle"/>
@@ -13,11 +13,107 @@
         <TextArea fx:id="editor" wrapText="true"/>
         <MenuButton fx:id="settings" StackPane.alignment="TOP_LEFT">
             <items>
-                <RadioMenuItem mnemonicParsing="false" text="Degrees" toggleGroup="$angle"/>
-                <RadioMenuItem mnemonicParsing="false" text="Radians" selected="true" toggleGroup="$angle"/>
-                <SeparatorMenuItem/>
-                <RadioMenuItem mnemonicParsing="false" text="Decimal" selected="true" toggleGroup="$mode"/>
-                <RadioMenuItem mnemonicParsing="false" text="Fraction" toggleGroup="$mode"/>
+                <Menu text="Output">
+                    <CustomMenuItem hideOnClick="false">
+                        <content>
+                            <RadioButton text="Decimal" selected="true" toggleGroup="$mode"/>
+                        </content>
+                    </CustomMenuItem>
+                    <CustomMenuItem hideOnClick="false">
+                        <content>
+                            <RadioButton text="Fraction" toggleGroup="$mode"/>
+                        </content>
+                    </CustomMenuItem>
+                </Menu>
+                <Menu text="Angle">
+                    <CustomMenuItem hideOnClick="false">
+                        <content>
+                            <RadioButton text="Degrees" selected="true" toggleGroup="$angle"/>
+                        </content>
+                    </CustomMenuItem>
+                    <CustomMenuItem hideOnClick="false">
+                        <content>
+                            <RadioButton text="Radians" toggleGroup="$angle"/>
+                        </content>
+                    </CustomMenuItem>
+                    <CustomMenuItem hideOnClick="false">
+                        <content>
+                            <RadioButton text="Revolutions" toggleGroup="$angle"/>
+                        </content>
+                    </CustomMenuItem>
+                </Menu>
+                <Menu text="Configure">
+                    <CustomMenuItem>
+                        <content>
+                            <HBox>
+                                <Label text="Decimals:"/>
+                                <Slider  blockIncrement="1.0"
+                                         cache="true"
+                                         majorTickUnit="1.0"
+                                         max="15.0"
+                                         min="0.0"
+                                         minorTickCount="0"
+                                         snapToTicks="true"
+                                         value="12.0" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                            </HBox>
+                        </content>
+                    </CustomMenuItem>
+                    <CustomMenuItem>
+                        <content>
+                            <HBox>
+                                <Label text="Display Scale:"/>
+                                <Slider  blockIncrement="0.1"
+                                         cache="true"
+                                         majorTickUnit="0.05"
+                                         max="1.0"
+                                         min="0.0"
+                                         minorTickCount="0"
+                                         snapToTicks="true"
+                                         value="0.334"/>
+                            </HBox>
+                        </content>
+                    </CustomMenuItem>
+                    <SeparatorMenuItem/>
+                    <CustomMenuItem>
+                        <content>
+                            <HBox>
+                                <Label text ="Standard UB:"/>
+                                <TextField>1E12</TextField>
+                            </HBox>
+                        </content>
+                    </CustomMenuItem>
+
+                    <CustomMenuItem>
+                        <content>
+                            <HBox>
+                                <Label text ="Standard LB:"/>
+                                <TextField>1E-6</TextField>
+                            </HBox>
+                        </content>
+                    </CustomMenuItem>
+                    <SeparatorMenuItem/>
+                    <CustomMenuItem>
+                        <content>
+                            <HBox>
+                                <Label text ="Fractional UB:"/>
+                                <TextField>1E12</TextField>
+                            </HBox>
+                        </content>
+                    </CustomMenuItem>
+
+                    <CustomMenuItem>
+                        <content>
+                            <HBox>
+                                <Label text ="Fractional LB:"/>
+                                <TextField>1E-6</TextField>
+                            </HBox>
+                        </content>
+                    </CustomMenuItem>
+
+                </Menu>
+                <MenuItem mnemonicParsing="false" text="Functions"/>
+                <MenuItem mnemonicParsing="false" text="Constants"/>
+                <MenuItem mnemonicParsing="false" text="Operators"/>
             </items>
         </MenuButton>
     </StackPane>

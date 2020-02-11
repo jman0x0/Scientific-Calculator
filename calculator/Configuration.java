@@ -4,6 +4,7 @@ package calculator;
  * Class used to configure aspects of the calculator.
  */
 public class Configuration {
+
     /**
      * Controls the width of the starting window.
      */

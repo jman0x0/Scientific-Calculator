@@ -22,7 +22,8 @@ public class Functions {
 
 	public enum Angle {
 		DEGREES,
-		RADIANS
+		RADIANS,
+		REVOLUTIONS
 	}
 
 	private Angle m_angle;
@@ -155,7 +156,12 @@ public class Functions {
 		if (m_angle == Angle.RADIANS) {
 			return value;
 		}
-		return value * (Math.PI/180.0);
+		else if (m_angle == Angle.DEGREES) {
+			return value * (Math.PI / 180.0);
+		}
+		else {
+			return value * 2 * Math.PI;
+		}
 	}
 
 	/**

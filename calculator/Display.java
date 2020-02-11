@@ -60,12 +60,20 @@ public class Display extends VBox {
     public Calculator loadCalculator() {
         final Calculator calculator = new Calculator();
 
-        final String angleString = ((RadioMenuItem)angle.getSelectedToggle()).getText();
-        if (angleString.equalsIgnoreCase("DEGREES")) {
-            calculator.getFunctions().setAngle(Functions.Angle.DEGREES);
-        }
-        else {
-            calculator.getFunctions().setAngle(Functions.Angle.RADIANS);
+        final String angleString = ((Labeled)angle.getSelectedToggle()).getText();
+
+        switch (angleString.toUpperCase()) {
+            case "DEGREES":
+                calculator.getFunctions().setAngle(Functions.Angle.DEGREES);
+                break;
+            case "RADIANS":
+                calculator.getFunctions().setAngle(Functions.Angle.RADIANS);
+                break;
+            case "REVOLUTIONS":
+                calculator.getFunctions().setAngle(Functions.Angle.REVOLUTIONS);
+                break;
+            default:
+
         }
 
         calculator.getConstants().put("ANS", answer);
@@ -98,7 +106,7 @@ public class Display extends VBox {
      * @param value The value for the output field.
      */
     public void updateDisplay(double value) {
-        final String modeString  = ((RadioMenuItem)mode.getSelectedToggle()).getText();
+        final String modeString  = ((Labeled)mode.getSelectedToggle()).getText();
         final boolean useScientific = Math.abs(value) > Configuration.RATIONAL_UPPER_BOUND
                                     ||Math.abs(value) < Configuration.RATIONAL_LOWER_BOUND;
 
