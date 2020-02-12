@@ -1,5 +1,13 @@
 package calculator;
 
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.util.StringConverter;
+import javafx.util.converter.NumberStringConverter;
+import javafx.beans.binding.*;
+import javafx.beans.property.*;
+import javafx.collections.ObservableList;
+
 /**
  * Class used to configure aspects of the calculator.
  */
@@ -62,12 +70,12 @@ public class Configuration {
     /**
      * Upper value bound before transitioning to scientific format.
      */
-    public static final double STANDARD_UPPER_BOUND = 10e12;
+    public static final DoubleProperty STANDARD_UPPER_BOUND = new SimpleDoubleProperty(10e12);
 
     /**
      * Lower value bound before transitioning to scientific format.
      */
-    public static final double STANDARD_LOWER_BOUND = 10e-7;
+    public static final DoubleProperty STANDARD_LOWER_BOUND = new SimpleDoubleProperty(1e-6);
 
     public static final double RATIONAL_UPPER_BOUND = 10e14;
 
@@ -102,5 +110,84 @@ public class Configuration {
     public static char getClosingBracket(char opener) {
         return ")]}".charAt("([{".indexOf(opener));
     }
+    
+    public static Menu search(ObservableList<MenuItem> node, String id) {
+    	for (var item : node) {
+    		if (item.getText().equalsIgnoreCase(id)) {
+    			return (Menu)item;
+    		}
+    	}
+    	
+    	return null;
+    }
 
+    public static StringConverter<Number> defaultingConverter(double defaultValue) {
+        return new NumberStringConverter() {
+            @Override
+            public Number fromString(String string) {
+                try {
+                    Double value = Double.parseDouble(string);
+                    return value;
+                } catch (NumberFormatException e) {
+                }
+                return defaultValue;
+            }
+        };
+    }
+
+    public static void attachDoubleFormatter(TextField field) {
+
+    }
+
+    public static void listenFor(ObservableList<MenuItem> items) {
+        final Menu constraints = search(items, "Constraints");
+        final CustomMenuItem data = (CustomMenuItem) constraints.getItems().get(0);
+        final Node pane = data.getContent();
+        final TextField stdLB = (TextField) pane.lookup("#stdLB");
+        final TextField stdUB = (TextField) pane.lookup("#stdUB");
+        final StringConverter<Number> cv = new NumberStringConverter() {
+            @Override
+            public Number fromString(String string) {
+                try {
+                    Double.parseDouble(string);
+                } catch (NumberFormatException e) {
+                    return null;
+                }
+                return 0;
+            }
+        };
+
+        final StringConverter<Number> converter = new NumberStringConverter();
+        //Bindings.bindBidirectional(stdLB.textProperty(), STANDARD_UPPER_BOUND, converter);
+        Bindings.bindBidirectional(stdLB.textProperty(), STANDARD_LOWER_BOUND, defaultingConverter(1e-6));
+        Bindings.bindBidirectional(stdUB.textProperty(), STANDARD_UPPER_BOUND, converter);
+
+        stdLB.setTextFormatter(new TextFormatter<>(change -> {
+            final String newText = change.getControlNewText();
+            if (change.isContentChange() && !newText.isEmpty()) {
+                if (change.getText().contains("-")) {
+                    final int negation = change.getControlText().trim().lastIndexOf('-');
+
+                    if (negation > 0) {
+                        return null;
+                    }
+                }
+                else if (change.getText().toUpperCase().contains("E")) {
+                    final int scientific = change.getControlText().trim().toUpperCase().lastIndexOf('E');
+
+                    if (scientific > 0) {
+                        return null;
+                    }
+                }
+                else {
+                    try {
+                        Double.parseDouble(change.getControlNewText());
+                    } catch (NumberFormatException e) {
+                        return null;
+                    }
+                }
+            }
+            return change;
+        }));
+    }
 }

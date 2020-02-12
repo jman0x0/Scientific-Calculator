@@ -13,18 +13,6 @@
         <TextArea fx:id="editor" wrapText="true"/>
         <MenuButton fx:id="settings" StackPane.alignment="TOP_LEFT">
             <items>
-                <Menu text="Output">
-                    <CustomMenuItem hideOnClick="false">
-                        <content>
-                            <RadioButton text="Decimal" selected="true" toggleGroup="$mode"/>
-                        </content>
-                    </CustomMenuItem>
-                    <CustomMenuItem hideOnClick="false">
-                        <content>
-                            <RadioButton text="Fraction" toggleGroup="$mode"/>
-                        </content>
-                    </CustomMenuItem>
-                </Menu>
                 <Menu text="Angle">
                     <CustomMenuItem hideOnClick="false">
                         <content>
@@ -42,74 +30,93 @@
                         </content>
                     </CustomMenuItem>
                 </Menu>
-                <Menu text="Configure">
-                    <CustomMenuItem>
-                        <content>
-                            <HBox>
-                                <Label text="Decimals:"/>
+                <Menu text="Display">
+                	<CustomMenuItem>
+                		<content>
+                			<GridPane>
+                				<Label GridPane.columnIndex="0" GridPane.rowIndex="0">
+                					Visible Lines:
+                				</Label>
+                				<Label GridPane.columnIndex="0" GridPane.rowIndex="1">
+                					Decimal Precision:
+                				</Label>
+                				<Label GridPane.columnIndex="0" GridPane.rowIndex="2">
+                					Display Scale:
+                				</Label>
+                				<Slider  blockIncrement="1.0"
+                                         cache="true"
+                                         majorTickUnit="2.0"
+                                         max="11.0"
+                                         min="1.0"
+                                         minorTickCount="1"
+                                         snapToTicks="true"
+                                         value="12.0" maxWidth="Infinity" showTickMarks="true" showTickLabels="true"
+                                         GridPane.columnIndex="1" GridPane.rowIndex="0"/>
                                 <Slider  blockIncrement="1.0"
                                          cache="true"
-                                         majorTickUnit="1.0"
+                                         majorTickUnit="3.0"
                                          max="15.0"
                                          min="0.0"
-                                         minorTickCount="0"
+                                         minorTickCount="2"
                                          snapToTicks="true"
-                                         value="12.0" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
-                            </HBox>
-                        </content>
-                    </CustomMenuItem>
-                    <CustomMenuItem>
-                        <content>
-                            <HBox>
-                                <Label text="Display Scale:"/>
-                                <Slider  blockIncrement="0.1"
+                                         value="12.0" maxWidth="Infinity" showTickMarks="true" showTickLabels="true"
+                                         GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                                 <Slider  blockIncrement="0.1"
                                          cache="true"
-                                         majorTickUnit="0.05"
+                                         majorTickUnit="0.2"
                                          max="1.0"
                                          min="0.0"
-                                         minorTickCount="0"
+                                         minorTickCount="2"
                                          snapToTicks="true"
-                                         value="0.334"/>
-                            </HBox>
-                        </content>
-                    </CustomMenuItem>
+                                         value="0.334" maxWidth="Infinity" showTickMarks="true" showTickLabels="true"
+                                         GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                			</GridPane>
+                		</content>
+                	</CustomMenuItem>
                     <SeparatorMenuItem/>
-                    <CustomMenuItem>
+                    <CustomMenuItem hideOnClick="false">
                         <content>
-                            <HBox>
-                                <Label text ="Standard UB:"/>
-                                <TextField>1E12</TextField>
-                            </HBox>
+                            <RadioButton text="Decimal" selected="true" toggleGroup="$mode"/>
                         </content>
                     </CustomMenuItem>
-
-                    <CustomMenuItem>
+                    <CustomMenuItem hideOnClick="false">
                         <content>
-                            <HBox>
-                                <Label text ="Standard LB:"/>
-                                <TextField>1E-6</TextField>
-                            </HBox>
+                            <RadioButton text="Fractional" toggleGroup="$mode"/>
                         </content>
                     </CustomMenuItem>
-                    <SeparatorMenuItem/>
-                    <CustomMenuItem>
-                        <content>
-                            <HBox>
-                                <Label text ="Fractional UB:"/>
-                                <TextField>1E12</TextField>
-                            </HBox>
-                        </content>
-                    </CustomMenuItem>
-
-                    <CustomMenuItem>
-                        <content>
-                            <HBox>
-                                <Label text ="Fractional LB:"/>
-                                <TextField>1E-6</TextField>
-                            </HBox>
-                        </content>
-                    </CustomMenuItem>
-
+                </Menu>
+                <Menu text="Constraints">
+                	<CustomMenuItem>
+                		<content>
+                			<GridPane vgap="6" hgap="10">
+                				<Label GridPane.columnIndex="0" GridPane.rowIndex="0">
+                					Standard Upper Bound:  
+                				</Label>
+                				<Label GridPane.columnIndex="0" GridPane.rowIndex="1">
+                					Standard Lower Bound:
+                				</Label>
+                				<Label GridPane.columnIndex="0" GridPane.rowIndex="3">
+                					Fraction Upper Bound:
+                				</Label>
+                				<Label GridPane.columnIndex="0" GridPane.rowIndex="4">
+                					Fractional Lower Bound:
+                				</Label>
+                				<Separator GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2"/>
+                				<TextField fx:id="stdUB" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                					1E12
+                				</TextField>
+                                <TextField fx:id="stdLB" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                	1E-6
+                                </TextField>
+                				<TextField fx:id="fracUB" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                					1E14
+                				</TextField>
+                                <TextField fx:id="fracLB" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                	1E-14
+                                </TextField>
+                			</GridPane>
+                		</content>
+                	</CustomMenuItem>
                 </Menu>
                 <MenuItem mnemonicParsing="false" text="Functions"/>
                 <MenuItem mnemonicParsing="false" text="Constants"/>

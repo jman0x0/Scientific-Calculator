@@ -175,13 +175,13 @@ public class Display extends VBox {
      * @return The converted value as a string.
      */
     public static String formatDouble(double value, int max) {
-        if (Math.abs(value) > Configuration.STANDARD_UPPER_BOUND) {
+        if (Math.abs(value) > Configuration.STANDARD_UPPER_BOUND.doubleValue()) {
             return new DecimalFormat("#." + "#".repeat(max) + "E0").format(value);
         }
         else if (Math.abs(value) < Configuration.SCIENTIFIC_LOWER_BOUND) {
             return "0";
         }
-        else if (Math.abs(value) < Configuration.STANDARD_LOWER_BOUND) {
+        else if (Math.abs(value) < Configuration.STANDARD_LOWER_BOUND.doubleValue()) {
             return new DecimalFormat("#." + "#".repeat(max) + "E0").format(value);
         }
         else if (value == Math.floor(value)) {

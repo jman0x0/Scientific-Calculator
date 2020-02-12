@@ -5,9 +5,12 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonBase;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuButton;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
@@ -81,7 +84,10 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root, Configuration.SCREEN_WIDTH, Configuration.SCREEN_HEIGHT));
         final Main controller = loader.getController();
         controller.attachListeners(primaryStage);
+        
         primaryStage.show();
+        final MenuButton menu = (MenuButton)(primaryStage.getScene().lookup("#display").lookup("#settings"));
+        Configuration.listenFor(menu.getItems());
     }
 
 
