@@ -5,11 +5,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonBase;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuButton;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
@@ -79,12 +77,12 @@ public class Main extends Application {
         final Parent root = loader.load();
         //Load and set the window's icon.
         primaryStage.getIcons().addAll(new Image(getClass().getResourceAsStream("../media/icon64x64.png")),
-                                       new Image(getClass().getResourceAsStream("../media/icon48x48.png")));
+                new Image(getClass().getResourceAsStream("../media/icon48x48.png")));
         primaryStage.setTitle("Calculator");
         primaryStage.setScene(new Scene(root, Configuration.SCREEN_WIDTH, Configuration.SCREEN_HEIGHT));
         final Main controller = loader.getController();
         controller.attachListeners(primaryStage);
-        
+
         primaryStage.show();
         final MenuButton menu = (MenuButton)(primaryStage.getScene().lookup("#display").lookup("#settings"));
         Configuration.listenFor(menu.getItems());

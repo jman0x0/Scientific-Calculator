@@ -14,6 +14,8 @@ public class Display extends VBox {
     private String currentText;
     private double answer;
     private double memory;
+    private double width;
+    private double height;
 
     @FXML
     public TextArea editor;
@@ -107,11 +109,11 @@ public class Display extends VBox {
      */
     public void updateDisplay(double value) {
         final String modeString  = ((Labeled)mode.getSelectedToggle()).getText();
-        final boolean useScientific = Math.abs(value) > Configuration.RATIONAL_UPPER_BOUND
-                                    ||Math.abs(value) < Configuration.RATIONAL_LOWER_BOUND;
+        final boolean useScientific = Math.abs(value) > Configuration.RATIONAL_UPPER_BOUND.doubleValue()
+                ||Math.abs(value) < Configuration.RATIONAL_LOWER_BOUND.doubleValue();
 
         if (useScientific || modeString.equalsIgnoreCase("DECIMAL")) {
-            final String formatted = formatDouble(value, Configuration.OUTPUT_DIGIT_COUNT);
+            final String formatted = formatDouble(value, Configuration.OUTPUT_DIGIT_COUNT.intValue());
             output.setText(formatted);
         }
         else {
@@ -156,12 +158,15 @@ public class Display extends VBox {
      * @param height Vertical component to constrain the text to.
      */
     public void scaleTo(double width, double height) {
-        final double reservedHeight = height * Configuration.DISPLAY_RESERVATION;
+        this.width = width;
+        this.height = height;
+        final double reservedHeight = height * Configuration.DISPLAY_RESERVATION.doubleValue();
         super.setPrefHeight(reservedHeight);
 
+        final double CHAR_PADDING = 1.2;
         final double LINE_PADDING = 1.4;
-        final double optimalWidth = width / Configuration.DISPLAY_CHARACTERS;
-        final double optimalHeight = reservedHeight / (Configuration.DISPLAY_LINES+1) / LINE_PADDING;
+        final double optimalWidth = width / Configuration.DISPLAY_CHARACTERS.intValue() * CHAR_PADDING;
+        final double optimalHeight = reservedHeight / (Configuration.DISPLAY_LINES.intValue()+1) / LINE_PADDING;
         final long fontSize = Math.round(Math.min(optimalWidth, optimalHeight));
         status.setStyle("-fx-font-size:" + fontSize*2/3);
         editor.setStyle("-fx-font-size:" + fontSize);
@@ -333,7 +338,7 @@ public class Display extends VBox {
      * @return Index of the last accessible paragraph.
      */
     private int getLastParagraph() {
-    	return editor.getParagraphs().size() - 1;
+        return editor.getParagraphs().size() - 1;
     }
 
     /**
@@ -342,7 +347,7 @@ public class Display extends VBox {
      * @return The requested paragraph from the TextArea.
      */
     private String getParagraph(int index) {
-    	return editor.getParagraphs().get(index).toString();
+        return editor.getParagraphs().get(index).toString();
     }
 
     /**
@@ -371,6 +376,32 @@ public class Display extends VBox {
         attachTextFormatter();
         attachTextConverter();
         attachKeyListener();
+
+
+        Configuration.RATIONAL_LOWER_BOUND.addListener((observable, v0, v1) -> {
+            updateDisplay(answer);
+        });
+        Configuration.RATIONAL_UPPER_BOUND.addListener((observable, v0, v1) -> {
+            updateDisplay(answer);
+        });
+        Configuration.STANDARD_LOWER_BOUND.addListener((observable, v0, v1) -> {
+            updateDisplay(answer);
+        });
+        Configuration.STANDARD_UPPER_BOUND.addListener((observable, v0, v1) -> {
+            updateDisplay(answer);
+        });
+        Configuration.OUTPUT_DIGIT_COUNT.addListener((observable, v0, v1) -> {
+            updateDisplay(answer);
+        });
+        Configuration.DISPLAY_CHARACTERS.addListener((observable, v0, v1) -> {
+            scaleTo(width, height);
+        });
+        Configuration.DISPLAY_RESERVATION.addListener((observable, v0, v1) -> {
+            scaleTo(width, height);
+        });
+        Configuration.DISPLAY_LINES.addListener((observable, v0, v1) -> {
+            scaleTo(width, height);
+        });
     }
 
     private void attachModeListener() {

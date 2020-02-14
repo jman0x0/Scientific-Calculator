@@ -3,7 +3,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<?import javafx.scene.text.Text?>
 <fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml">
     <fx:define>
         <ToggleGroup fx:id="angle"/>
@@ -31,28 +30,40 @@
                     </CustomMenuItem>
                 </Menu>
                 <Menu text="Display">
-                	<CustomMenuItem>
-                		<content>
-                			<GridPane>
-                				<Label GridPane.columnIndex="0" GridPane.rowIndex="0">
-                					Visible Lines:
-                				</Label>
-                				<Label GridPane.columnIndex="0" GridPane.rowIndex="1">
-                					Decimal Precision:
-                				</Label>
-                				<Label GridPane.columnIndex="0" GridPane.rowIndex="2">
-                					Display Scale:
-                				</Label>
-                				<Slider  blockIncrement="1.0"
+                    <CustomMenuItem>
+                        <content>
+                            <GridPane hgap="10">
+                                <Label GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                    Visible Characters:
+                                </Label>
+                                <Label GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                    Visible Lines:
+                                </Label>
+                                <Label GridPane.columnIndex="0" GridPane.rowIndex="2">
+                                    Decimal Precision:
+                                </Label>
+                                <Label GridPane.columnIndex="0" GridPane.rowIndex="3">
+                                    Display Scale:
+                                </Label>
+                                <Slider  fx:id="slider_characters" blockIncrement="1.0"
+                                         cache="true"
+                                         majorTickUnit="5.0"
+                                         max="30.0"
+                                         min="10.0"
+                                         minorTickCount="4"
+                                         snapToTicks="true"
+                                         value="20.0" maxWidth="Infinity" showTickMarks="true" showTickLabels="true"
+                                         GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                                <Slider  fx:id="slider_lines" blockIncrement="1.0"
                                          cache="true"
                                          majorTickUnit="2.0"
                                          max="11.0"
                                          min="1.0"
                                          minorTickCount="1"
                                          snapToTicks="true"
-                                         value="12.0" maxWidth="Infinity" showTickMarks="true" showTickLabels="true"
-                                         GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-                                <Slider  blockIncrement="1.0"
+                                         value="4.0" maxWidth="Infinity" showTickMarks="true" showTickLabels="true"
+                                         GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                                <Slider  fx:id="slider_precision" blockIncrement="1.0"
                                          cache="true"
                                          majorTickUnit="3.0"
                                          max="15.0"
@@ -60,19 +71,19 @@
                                          minorTickCount="2"
                                          snapToTicks="true"
                                          value="12.0" maxWidth="Infinity" showTickMarks="true" showTickLabels="true"
-                                         GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                                 <Slider  blockIncrement="0.1"
-                                         cache="true"
-                                         majorTickUnit="0.2"
-                                         max="1.0"
-                                         min="0.0"
-                                         minorTickCount="2"
-                                         snapToTicks="true"
-                                         value="0.334" maxWidth="Infinity" showTickMarks="true" showTickLabels="true"
                                          GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                			</GridPane>
-                		</content>
-                	</CustomMenuItem>
+                                <Slider fx:id="slider_scale" blockIncrement="0.1"
+                                        cache="true"
+                                        majorTickUnit="0.12"
+                                        max="0.8"
+                                        min="0.2"
+                                        minorTickCount="2"
+                                        snapToTicks="true"
+                                        value="0.334" maxWidth="Infinity" showTickMarks="true" showTickLabels="true"
+                                        GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                            </GridPane>
+                        </content>
+                    </CustomMenuItem>
                     <SeparatorMenuItem/>
                     <CustomMenuItem hideOnClick="false">
                         <content>
@@ -86,37 +97,37 @@
                     </CustomMenuItem>
                 </Menu>
                 <Menu text="Constraints">
-                	<CustomMenuItem>
-                		<content>
-                			<GridPane vgap="6" hgap="10">
-                				<Label GridPane.columnIndex="0" GridPane.rowIndex="0">
-                					Standard Upper Bound:  
-                				</Label>
-                				<Label GridPane.columnIndex="0" GridPane.rowIndex="1">
-                					Standard Lower Bound:
-                				</Label>
-                				<Label GridPane.columnIndex="0" GridPane.rowIndex="3">
-                					Fraction Upper Bound:
-                				</Label>
-                				<Label GridPane.columnIndex="0" GridPane.rowIndex="4">
-                					Fractional Lower Bound:
-                				</Label>
-                				<Separator GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2"/>
-                				<TextField fx:id="stdUB" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                					1E12
-                				</TextField>
+                    <CustomMenuItem>
+                        <content>
+                            <GridPane vgap="6" hgap="10">
+                                <Label GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                    Standard Upper Bound:
+                                </Label>
+                                <Label GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                    Standard Lower Bound:
+                                </Label>
+                                <Label GridPane.columnIndex="0" GridPane.rowIndex="3">
+                                    Fraction Upper Bound:
+                                </Label>
+                                <Label GridPane.columnIndex="0" GridPane.rowIndex="4">
+                                    Fractional Lower Bound:
+                                </Label>
+                                <Separator GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2"/>
+                                <TextField fx:id="stdUB" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                    1.0E12
+                                </TextField>
                                 <TextField fx:id="stdLB" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                	1E-6
+                                    1.0E-6
                                 </TextField>
-                				<TextField fx:id="fracUB" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                					1E14
-                				</TextField>
-                                <TextField fx:id="fracLB" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                	1E-14
+                                <TextField fx:id="ratUB" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                    1.0E14
                                 </TextField>
-                			</GridPane>
-                		</content>
-                	</CustomMenuItem>
+                                <TextField fx:id="ratLB" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                    1.0E-14
+                                </TextField>
+                            </GridPane>
+                        </content>
+                    </CustomMenuItem>
                 </Menu>
                 <MenuItem mnemonicParsing="false" text="Functions"/>
                 <MenuItem mnemonicParsing="false" text="Constants"/>

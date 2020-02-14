@@ -125,6 +125,11 @@
     -fx-padding: 0;
 }
 
+.custom-menu-item:focused,
+.custom-menu-item:hover {
+	-fx-background-color: transparent;
+}
+
 
 #keypad {
     -fx-background-image: url("keypad_texture.png");

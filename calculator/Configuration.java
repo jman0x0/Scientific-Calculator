@@ -2,9 +2,6 @@ package calculator;
 
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.util.StringConverter;
-import javafx.util.converter.NumberStringConverter;
-import javafx.beans.binding.*;
 import javafx.beans.property.*;
 import javafx.collections.ObservableList;
 
@@ -40,27 +37,27 @@ public class Configuration {
     /**
      * The minimum amount of editor entries to be viewable at once.
      */
-    public static final int DISPLAY_LINES = 4;
+    public static final IntegerProperty DISPLAY_LINES = new SimpleIntegerProperty(4);
 
     /**
      * The minimum amount of characters inside of a equation without line breaking.
      */
-    public static final int DISPLAY_CHARACTERS = 20;
+    public static final IntegerProperty DISPLAY_CHARACTERS = new SimpleIntegerProperty(20);
 
     /**
      * Portion of the screen dedicated towards the display.
      */
-    public static final double DISPLAY_RESERVATION = 1/3.;
+    public static final DoubleProperty DISPLAY_RESERVATION = new SimpleDoubleProperty(1/3.);
 
     /**
      * Portion of the screen dedicated towards the keypad.
      */
-    public static final double KEYPAD_RESERVATION = 1.0 - DISPLAY_RESERVATION;
+    public static final DoubleProperty KEYPAD_RESERVATION = new SimpleDoubleProperty(1.0 - DISPLAY_RESERVATION.doubleValue());
 
     /**
      * Maximum amount of decimal places used to display the result of an expression.
      */
-    public static final int OUTPUT_DIGIT_COUNT = 12;
+    public static final IntegerProperty OUTPUT_DIGIT_COUNT = new SimpleIntegerProperty(12);
 
     /**
      * Maximum amount of decimal places used to display the memory's contents.
@@ -68,19 +65,24 @@ public class Configuration {
     public static final int MEMORY_DIGIT_COUNT = 3;
 
     /**
-     * Upper value bound before transitioning to scientific format.
+     * Upper value bound before decimal transitions to scientific format.
      */
-    public static final DoubleProperty STANDARD_UPPER_BOUND = new SimpleDoubleProperty(10e12);
+    public static final DoubleProperty STANDARD_UPPER_BOUND = new SimpleDoubleProperty(1e12);
 
     /**
-     * Lower value bound before transitioning to scientific format.
+     * Lower value bound before decimal transitions to scientific format.
      */
     public static final DoubleProperty STANDARD_LOWER_BOUND = new SimpleDoubleProperty(1e-6);
 
-    public static final double RATIONAL_UPPER_BOUND = 10e14;
+    /**
+     * Upper value bound before fractions transition to scientific format.
+     */
+    public static final DoubleProperty RATIONAL_UPPER_BOUND = new SimpleDoubleProperty(1e14);
 
-
-    public static final double RATIONAL_LOWER_BOUND = 10e-14;
+    /**
+     * Lower value bound before fractions transition to scientific format.
+     */
+    public static final DoubleProperty RATIONAL_LOWER_BOUND = new SimpleDoubleProperty(1e-14);
 
     /**
      * Lower value bound before transition to 0.
@@ -110,84 +112,57 @@ public class Configuration {
     public static char getClosingBracket(char opener) {
         return ")]}".charAt("([{".indexOf(opener));
     }
-    
+
     public static Menu search(ObservableList<MenuItem> node, String id) {
-    	for (var item : node) {
-    		if (item.getText().equalsIgnoreCase(id)) {
-    			return (Menu)item;
-    		}
-    	}
-    	
-    	return null;
-    }
-
-    public static StringConverter<Number> defaultingConverter(double defaultValue) {
-        return new NumberStringConverter() {
-            @Override
-            public Number fromString(String string) {
-                try {
-                    Double value = Double.parseDouble(string);
-                    return value;
-                } catch (NumberFormatException e) {
-                }
-                return defaultValue;
+        for (var item : node) {
+            if (item.getText().equalsIgnoreCase(id)) {
+                return (Menu)item;
             }
-        };
+        }
+
+        return null;
     }
 
-    public static void attachDoubleFormatter(TextField field) {
+    public static void attachDoubleFormatter(TextField field, DoubleProperty property) {
+        final double defaultValue = property.doubleValue();
 
+        field.focusedProperty().addListener((observable, old, newFocus) -> {
+            try {
+                final Double value = Double.parseDouble(field.getText());
+                property.setValue(value);
+            } catch(NumberFormatException except) {
+                property.setValue(defaultValue);
+                field.setText(String.valueOf(property.get()));
+            }
+        });
+    }
+
+    public static Node getInnerPane(ObservableList<MenuItem> items, String name) {
+        final Menu constraints = search(items, name);
+        final CustomMenuItem data = (CustomMenuItem) constraints.getItems().get(0);
+        return data.getContent();
     }
 
     public static void listenFor(ObservableList<MenuItem> items) {
-        final Menu constraints = search(items, "Constraints");
-        final CustomMenuItem data = (CustomMenuItem) constraints.getItems().get(0);
-        final Node pane = data.getContent();
+        final Node pane = getInnerPane(items, "Constraints");
+        final Node display = getInnerPane(items, "Display");
         final TextField stdLB = (TextField) pane.lookup("#stdLB");
         final TextField stdUB = (TextField) pane.lookup("#stdUB");
-        final StringConverter<Number> cv = new NumberStringConverter() {
-            @Override
-            public Number fromString(String string) {
-                try {
-                    Double.parseDouble(string);
-                } catch (NumberFormatException e) {
-                    return null;
-                }
-                return 0;
-            }
-        };
+        final TextField ratLB = (TextField) pane.lookup("#ratLB");
+        final TextField ratUB = (TextField) pane.lookup("#ratUB");
+        final Slider lines = (Slider) display.lookup("#slider_lines");
+        final Slider precision = (Slider)display.lookup("#slider_precision");
+        final Slider scale = (Slider)display.lookup("#slider_scale");
+        final Slider characters = (Slider)display.lookup("#slider_characters");
 
-        final StringConverter<Number> converter = new NumberStringConverter();
-        //Bindings.bindBidirectional(stdLB.textProperty(), STANDARD_UPPER_BOUND, converter);
-        Bindings.bindBidirectional(stdLB.textProperty(), STANDARD_LOWER_BOUND, defaultingConverter(1e-6));
-        Bindings.bindBidirectional(stdUB.textProperty(), STANDARD_UPPER_BOUND, converter);
+        DISPLAY_LINES.bind(lines.valueProperty());
+        OUTPUT_DIGIT_COUNT.bind(precision.valueProperty());
+        DISPLAY_RESERVATION.bind(scale.valueProperty());
+        DISPLAY_CHARACTERS.bind(characters.valueProperty());
 
-        stdLB.setTextFormatter(new TextFormatter<>(change -> {
-            final String newText = change.getControlNewText();
-            if (change.isContentChange() && !newText.isEmpty()) {
-                if (change.getText().contains("-")) {
-                    final int negation = change.getControlText().trim().lastIndexOf('-');
-
-                    if (negation > 0) {
-                        return null;
-                    }
-                }
-                else if (change.getText().toUpperCase().contains("E")) {
-                    final int scientific = change.getControlText().trim().toUpperCase().lastIndexOf('E');
-
-                    if (scientific > 0) {
-                        return null;
-                    }
-                }
-                else {
-                    try {
-                        Double.parseDouble(change.getControlNewText());
-                    } catch (NumberFormatException e) {
-                        return null;
-                    }
-                }
-            }
-            return change;
-        }));
+        attachDoubleFormatter(stdLB, STANDARD_LOWER_BOUND);
+        attachDoubleFormatter(stdUB, STANDARD_UPPER_BOUND);
+        attachDoubleFormatter(ratLB, RATIONAL_LOWER_BOUND);
+        attachDoubleFormatter(ratUB, RATIONAL_UPPER_BOUND);
     }
 }
