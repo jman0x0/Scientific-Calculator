@@ -66,16 +66,16 @@ public class Display extends VBox {
 
         switch (angleString.toUpperCase()) {
             case "DEGREES":
-                calculator.getFunctions().setAngle(Functions.Angle.DEGREES);
+                calculator.setAngle(Calculator.Angle.DEGREES);
                 break;
             case "RADIANS":
-                calculator.getFunctions().setAngle(Functions.Angle.RADIANS);
+                calculator.setAngle(Calculator.Angle.RADIANS);
                 break;
             case "REVOLUTIONS":
-                calculator.getFunctions().setAngle(Functions.Angle.REVOLUTIONS);
+                calculator.setAngle(Calculator.Angle.REVOLUTIONS);
                 break;
             default:
-
+                throw new RuntimeException("Invalid angle type entered.");
         }
 
         calculator.getConstants().put("ANS", answer);

@@ -51,13 +51,33 @@ public class Calculator {
      * Arguments extracted from comma delimited arguments from a closed expression.
      */
 	public static class ArgumentParse {
-		public ArrayList<Double> arguments;
+		public ArrayList<Number> arguments;
 		public int extract;
 		
 		public ArgumentParse() {
 			this.arguments = new ArrayList<>();
 		}
 	}
+
+    public enum Angle {
+        DEGREES,
+        RADIANS,
+        REVOLUTIONS;
+
+        public double convertValue(double value) {
+            if (this == Angle.RADIANS) {
+                return value;
+            }
+            else if (this == Angle.DEGREES) {
+                return value * (Math.PI / 180.0);
+            }
+            else {
+                return value * 2 * Math.PI;
+            }
+        }
+    }
+
+    private Angle m_angle;
 
     public Calculator()
     {
@@ -69,6 +89,14 @@ public class Calculator {
 		this.m_functions = functions;
 		this.m_operators = operators;
 		this.m_constants = constants;
+    }
+
+    public void setAngle(Angle angle) {
+        m_angle = angle;
+    }
+
+    Angle getAngle() {
+        return m_angle;
     }
 
     public Functions getFunctions() {
@@ -358,7 +386,9 @@ public class Calculator {
 		final boolean isFunction = Configuration.isOpeningBracket(endingChar);
         if (isFunction && m_functions.contains(identifier)) {
             final ArgumentParse multiParse = evaluateArguments(expression, idx+1, end, Configuration.getClosingBracket(endingChar));
-            final double value = m_functions.apply(identifier, multiParse.arguments);
+            final MathFunction.ParameterPack parameters = new MathFunction.ParameterPack(multiParse.arguments, m_functions, m_constants, m_operators, m_angle);
+
+            final double value = m_functions.apply(identifier, parameters);
 			return new Parsing(value, multiParse.extract, '\0');
         }
 		else if (m_constants.containsKey(identifier)) {

@@ -1,5 +1,6 @@
 package calculator;
 
+import java.awt.event.MouseAdapter;
 import java.util.function.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,36 +11,10 @@ import java.util.ArrayList;
  * Class used to map identifiers composed of strings to functional objects.
  */
 public class Functions {
-	public static class Functor {
-		public Function<ArrayList<Double>, Double> function;
-		public int arguments;
-		
-		public Functor(Function<ArrayList<Double>, Double> fn, int args) {
-			this.function = fn;
-			this.arguments = args;
-		}
-	}
-
-	public enum Angle {
-		DEGREES,
-		RADIANS,
-		REVOLUTIONS
-	}
-
-	private Angle m_angle;
-
-	private Map<String, ArrayList<Functor>> m_functions;
+	private Map<String, ArrayList<MathFunction>> m_functions;
 	
 	public Functions() {
-		m_functions = new HashMap<String, ArrayList<Functor>>();
-	}
-
-	public void setAngle(Angle angle) {
-		m_angle = angle;
-	}
-
-	Angle getAngle() {
-		return m_angle;
+		m_functions = new HashMap<>();
 	}
 
 	public int size() {
@@ -53,15 +28,15 @@ public class Functions {
 	/**
 	 * Check if an overloaded function exists.
 	 * @param identifier Name of the overloaded function.
-	 * @param args Number of arguments that overload accepts.
+	 * @param arguments Number of arguments that overload accepts.
 	 * @return True if a function with a matching name and overload is found, else false.
 	 */
-	public boolean contains(String identifier, int args) {
+	public boolean contains(String identifier, int arguments) {
 		if (contains(identifier)) {
-			final ArrayList<Functor> overloads = m_functions.get(identifier);
+			final ArrayList<MathFunction> overloads = m_functions.get(identifier);
 		
-			for (Functor function : overloads) {
-				if (function.arguments == args) {
+			for (MathFunction function : overloads) {
+				if (function.getArguments() == arguments) {
 					return true;
 				}
 			}
@@ -82,15 +57,15 @@ public class Functions {
 	/**
 	 * Remove an overloaded function.
 	 * @param identifier The name of the overloaded function.
-	 * @param args Number of arguments for that overload.
+	 * @param arguments Number of arguments for that overload.
 	 * @return True if the function was found and removed, else false.
 	 */
-	public boolean remove(String identifier, int args) {
+	public boolean remove(String identifier, int arguments) {
 		if (contains(identifier)) {
-			final ArrayList<Functor> overloads = m_functions.get(identifier);
+			final ArrayList<MathFunction> overloads = m_functions.get(identifier);
 		
 			for (int idx = 0; idx != overloads.size(); ++idx) {
-				if (overloads.get(idx).arguments == args) {
+				if (overloads.get(idx).getArguments() == arguments) {
 					return overloads.remove(idx) != null;
 				}
 			}
@@ -103,7 +78,7 @@ public class Functions {
 	 * @param identifier Shared name between all overloaded functions.
 	 * @return A list containing all the overloads.
 	 */
-	private ArrayList<Functor> getOverloads(String identifier) {
+	private ArrayList<MathFunction> getOverloads(String identifier) {
 		if (!contains(identifier)) {
 			m_functions.put(identifier, new ArrayList<>());
 		}
@@ -116,15 +91,15 @@ public class Functions {
 	 * @param arguments Number of arguments accepted by this function.
 	 * @param function The actual functional object.
 	 */
-	public void emplace(String identifier, int arguments, Function<ArrayList<Double>, Double> function) {
-		final ArrayList<Functor> overloads = getOverloads(identifier);
+	public void emplace(String identifier, int arguments, Function<MathFunction.ParameterPack, Number> function) {
+		final ArrayList<MathFunction> overloads = getOverloads(identifier);
 
-		for (Functor fn : overloads) {
-			if (fn.arguments == arguments) {
+		for (MathFunction fn : overloads) {
+			if (fn.getArguments() == arguments) {
 				throw new RuntimeException("Overlapping function signatures");
 			}
 		}
-		overloads.add(new Functor(function, arguments));
+		overloads.add(new JavaFunction(identifier, arguments, function));
 	}
 
 	/**
@@ -133,15 +108,15 @@ public class Functions {
 	 * @param arguments The numeric arguments to pass to the function.
 	 * @return The result of the invoked math function.
 	 */
-	public Double apply(String identifier, ArrayList<Double> arguments) {
-		final ArrayList<Functor> overloads = m_functions.get(identifier);
+	public Double apply(String identifier, MathFunction.ParameterPack arguments) {
+		final ArrayList<MathFunction> overloads = m_functions.get(identifier);
 
-		for (Functor fn : overloads) {
-			if (fn.arguments == arguments.size()) {
-				return fn.function.apply(arguments);
+		for (MathFunction fn : overloads) {
+			if (fn.getArguments() == arguments.values.size()) {
+				return fn.apply(arguments).doubleValue();
 			}
 		}
-		throw new RuntimeException("No overload of " + identifier + " accepts " + arguments.size() + " parameters");
+		throw new RuntimeException("No overload of " + identifier + " accepts " + arguments.values.size() + " parameters");
 	}
 	
 	public void clear() {
@@ -152,16 +127,9 @@ public class Functions {
 		return m_functions.isEmpty();
 	}
 
-	public double angleType(double value) {
-		if (m_angle == Angle.RADIANS) {
-			return value;
-		}
-		else if (m_angle == Angle.DEGREES) {
-			return value * (Math.PI / 180.0);
-		}
-		else {
-			return value * 2 * Math.PI;
-		}
+	public void loadFunctionFromString(String definition) {
+		final UserFunction fn = new UserFunction(definition);
+		getOverloads(fn.getIdentifier()).add(fn);
 	}
 
 	/**
@@ -171,83 +139,83 @@ public class Functions {
 	static {
 		JMATH = new Functions();
 		JMATH.emplace("abs", 1, (args) -> {
-			return Math.abs(args.get(0));
+			return Math.abs(args.values.get(0).doubleValue());
 		});
 		JMATH.emplace("sqrt", 1, (args) -> {
-			return Math.sqrt(args.get(0));
+			return Math.sqrt(args.values.get(0).doubleValue());
 		});
 		JMATH.emplace("min", 2, (args) -> {
-			return Math.min(args.get(0), args.get(1));
+			return Math.min(args.values.get(0).doubleValue(), args.values.get(1).doubleValue());
 		});
 		JMATH.emplace("max", 2, (args) -> {
-			return Math.max(args.get(0), args.get(1));
+			return Math.max(args.values.get(0).doubleValue(), args.values.get(1).doubleValue());
 		});
 		JMATH.emplace("floor", 1, (args) -> {
-			return Math.floor(args.get(0));
+			return Math.floor(args.values.get(0).doubleValue());
 		});
 		JMATH.emplace("ceil", 1, (args) -> {
-			return Math.ceil(args.get(0));
+			return Math.ceil(args.values.get(0).doubleValue());
 		});
 		JMATH.emplace("round", 1, (args) -> {
-			return (double)Math.round(args.get(0));
+			return (double)Math.round(args.values.get(0).doubleValue());
 		});
 		JMATH.emplace("sin", 1, (args) -> {
-			return Math.sin(JMATH.angleType(args.get(0)));
+			return Math.sin(args.angle.convertValue(args.values.get(0).doubleValue()));
 		});
 		JMATH.emplace("sinh", 1, (args) -> {
-			return Math.sinh(args.get(0));
+			return Math.sinh(args.values.get(0).doubleValue());
 		});
 		JMATH.emplace("asin", 1, (args) -> {
-			return Math.asin(args.get(0));
+			return Math.asin(args.values.get(0).doubleValue());
 		});
 		JMATH.emplace("asinh", 1, (args) -> {
-			final double x = args.get(0);
+			final double x = args.values.get(0).doubleValue();
 			return Math.log(x + Math.sqrt(1.0 + x*x));
 		});
 		JMATH.emplace("cos", 1, (args) -> {
-			return Math.cos(JMATH.angleType(args.get(0)));
+			return Math.cos(args.angle.convertValue(args.values.get(0).doubleValue()));
 		});
 		JMATH.emplace("cosh", 1, (args) -> {
-			return Math.cosh(args.get(0));
+			return Math.cosh(args.values.get(0).doubleValue());
 		});
 		JMATH.emplace("acos", 1, (args) -> {
-			return Math.acos(args.get(0));
+			return Math.acos(args.values.get(0).doubleValue());
 		});
 		JMATH.emplace("acosh", 1, (args) -> {
-			final double x = args.get(0);
+			final double x = args.values.get(0).doubleValue();
 			return Math.log(x + Math.sqrt(x+1)*Math.sqrt(x-1));
 		});
 		JMATH.emplace("tan", 1, (args) -> {
-			return Math.tan(JMATH.angleType(args.get(0)));
+			return Math.tan(args.angle.convertValue(args.values.get(0).doubleValue()));
 		});
 		JMATH.emplace("tanh", 1, (args) -> {
-			return Math.tanh(args.get(0));
+			return Math.tanh(args.values.get(0).doubleValue());
 		});
 		JMATH.emplace("atan", 1, (args) -> {
-			return Math.atan(args.get(0));
+			return Math.atan(args.values.get(0).doubleValue());
 		});
 		JMATH.emplace("atanh", 1, (args) -> {
-			final double x = args.get(0);
+			final double x = args.values.get(0).doubleValue();
 			return 0.5 * (Math.log(1+x) - Math.log(1-x));
 		});
 		JMATH.emplace("log", 1, (args) -> {
-			return Math.log10(args.get(0));
+			return Math.log10(args.values.get(0).doubleValue());
 		});
 		JMATH.emplace("exp", 1, (args) -> {
-			return Math.exp(args.get(0));
+			return Math.exp(args.values.get(0).doubleValue());
 		});
 		JMATH.emplace("ln", 1, (args) -> {
-			return Math.log(args.get(0));
+			return Math.log(args.values.get(0).doubleValue());
 		});
 		JMATH.emplace("log10", 1, (args) -> {
-			return Math.log10(args.get(0));
+			return Math.log10(args.values.get(0).doubleValue());
 		});
 		JMATH.emplace("rand", 0, (args) -> {
 			return Math.random();
 		});
 		JMATH.emplace("rand", 2, (args) -> {
-			final double lower = args.get(0);
-			final double upper = args.get(1);
+			final double lower = args.values.get(0).doubleValue();
+			final double upper = args.values.get(1).doubleValue();
 			return lower + Math.random() * (upper - lower);
 		});
 	}
