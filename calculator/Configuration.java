@@ -4,6 +4,9 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.beans.property.*;
 import javafx.collections.ObservableList;
+import javafx.stage.Stage;
+
+import java.util.Stack;
 
 /**
  * Class used to configure aspects of the calculator.
@@ -22,7 +25,7 @@ public class Configuration {
     /**
      * Factor used to specify the magnitude of the starting window.
      */
-    public static final int FACTOR = 45;
+    public static final int FACTOR = 50;
 
     /**
      * Width of the starting screen.
@@ -84,6 +87,8 @@ public class Configuration {
      */
     public static final DoubleProperty RATIONAL_LOWER_BOUND = new SimpleDoubleProperty(1e-14);
 
+    public static final Stack<Stage> STAGE_STACK = new Stack<>();
+
     /**
      * Lower value bound before transition to 0.
      */
@@ -113,10 +118,10 @@ public class Configuration {
         return ")]}".charAt("([{".indexOf(opener));
     }
 
-    public static Menu search(ObservableList<MenuItem> node, String id) {
+    public static MenuItem search(ObservableList<MenuItem> node, String id) {
         for (var item : node) {
             if (item.getText().equalsIgnoreCase(id)) {
-                return (Menu)item;
+                return item;
             }
         }
 
@@ -138,7 +143,7 @@ public class Configuration {
     }
 
     public static Node getInnerPane(ObservableList<MenuItem> items, String name) {
-        final Menu constraints = search(items, name);
+        final Menu constraints = (Menu)search(items, name);
         final CustomMenuItem data = (CustomMenuItem) constraints.getItems().get(0);
         return data.getContent();
     }
@@ -154,7 +159,10 @@ public class Configuration {
         final Slider precision = (Slider)display.lookup("#slider_precision");
         final Slider scale = (Slider)display.lookup("#slider_scale");
         final Slider characters = (Slider)display.lookup("#slider_characters");
-
+        search(items, "Functions").setOnAction(action -> {
+            final FunctionEditor editor = new FunctionEditor();
+            editor.display(Configuration.STAGE_STACK.peek());
+        });
         DISPLAY_LINES.bind(lines.valueProperty());
         OUTPUT_DIGIT_COUNT.bind(precision.valueProperty());
         DISPLAY_RESERVATION.bind(scale.valueProperty());

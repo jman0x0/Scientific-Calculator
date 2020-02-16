@@ -82,12 +82,11 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root, Configuration.SCREEN_WIDTH, Configuration.SCREEN_HEIGHT));
         final Main controller = loader.getController();
         controller.attachListeners(primaryStage);
-
+        Configuration.STAGE_STACK.push(primaryStage);
         primaryStage.show();
         final MenuButton menu = (MenuButton)(primaryStage.getScene().lookup("#display").lookup("#settings"));
         Configuration.listenFor(menu.getItems());
     }
-
 
     public static void main(String[] args) {
         launch(args);

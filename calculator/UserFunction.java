@@ -29,6 +29,26 @@ public class UserFunction extends MathFunction {
         return calculator.evaluate(expression);
     }
 
+    public String getDefinition() {
+        return definition;
+    }
+
+    public String getExpression() {
+        return expression;
+    }
+
+    public ArrayList<String> getVariables() {
+        return variables;
+    }
+
+    public void setExpression(String expression) {
+        this.expression = expression;
+    }
+
+    public void setVariables(ArrayList<String> variables) {
+        this.variables = variables;
+    }
+
     private int extractHeader(String definition) {
         for (int i = 0; i != definition.length(); ++i) {
             final char token = definition.charAt(i);

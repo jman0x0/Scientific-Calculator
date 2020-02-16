@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.collections.FXCollections?>
+
+<fx:root type="javafx.scene.layout.GridPane" stylesheets="@../media/configuration_style.css" xmlns:fx="http://javafx.com/fxml" maxHeight="Infinity" maxWidth="Infinity">
+    <fx:define>
+        <FXCollections fx:id="functionList" fx:factory="observableArrayList">
+
+        </FXCollections>
+    </fx:define>
+
+    <columnConstraints>
+        <ColumnConstraints hgrow="ALWAYS"/>
+        <ColumnConstraints hgrow="ALWAYS"/>
+    </columnConstraints>
+
+    <TitledPane GridPane.columnIndex="0" text="Functions" collapsible="false">
+        <VBox spacing="10">
+            <ListView fx:id="functionSelector" items="$functionList">
+
+            </ListView>
+            <HBox spacing="10">
+                <Button fx:id="add" HBox.hgrow="ALWAYS" onAction="#onAddAction" maxWidth="Infinity">Add</Button>
+                <Button fx:id="delete" HBox.hgrow="ALWAYS" onAction="#onDeleteAction" maxWidth="Infinity">Delete</Button>
+            </HBox>
+        </VBox>
+    </TitledPane>
+    <GridPane GridPane.columnIndex="1" alignment="CENTER" fx:id="infoPane" visible="false" hgap="16" vgap="16">
+        <VBox GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS">
+            <Label text="Definition:"/>
+            <TextField editable="false" fx:id="definitionField"/>
+        </VBox>
+        <VBox GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS">
+            <Label text="Identifier:"/>
+            <TextField fx:id="identifierField"/>
+        </VBox>
+        <VBox GridPane.rowIndex="2" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS">
+            <Label text="Variables:"/>
+            <TextField fx:id="variableField"/>
+        </VBox>
+        <VBox GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS">
+            <Label text="Expression:"/>
+            <TextField fx:id="expressionField"/>
+        </VBox>
+    </GridPane>
+</fx:root>

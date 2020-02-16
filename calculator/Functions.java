@@ -1,6 +1,6 @@
 package calculator;
 
-import java.awt.event.MouseAdapter;
+import java.util.Set;
 import java.util.function.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -132,6 +132,17 @@ public class Functions {
 		getOverloads(fn.getIdentifier()).add(fn);
 	}
 
+	public MathFunction getFunction(String identifier) {
+		if (contains(identifier)) {
+			return m_functions.get(identifier).get(0);
+		}
+		return null;
+	}
+
+	public Set<Map.Entry<String, ArrayList<MathFunction>>> entrySet() {
+		return m_functions.entrySet();
+	}
+
 	/**
 	 * Default set of functions that are available within the java library plus a few more.
 	 */
@@ -218,5 +229,6 @@ public class Functions {
 			final double upper = args.values.get(1).doubleValue();
 			return lower + Math.random() * (upper - lower);
 		});
+		JMATH.loadFunctionFromString("nthroot(value, n) = value ^ (1/n)");
 	}
 }
