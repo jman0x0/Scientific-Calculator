@@ -29,6 +29,9 @@ public class ConstantEditor extends GridPane implements SubWindow {
     private GridPane infoPane;
 
     @FXML
+    private TextField identifierField;
+
+    @FXML
     private TextField conversionsField;
 
     @FXML
@@ -42,9 +45,46 @@ public class ConstantEditor extends GridPane implements SubWindow {
         selectionModel.selectedItemProperty().addListener(((observableValue, oldValue, newValue) -> {
             updateInformation(newValue);
         }));
+        constantSelector.focusedProperty().addListener(((observableValue, aBoolean, t1) -> {
+            if (!t1) {
+                System.out.println("Constants");
+            }
+        }));
+        identifierField.focusedProperty().addListener(((observableValue, v0, focused) -> {
+            if (!focused) {
+                final var model = constantSelector.getSelectionModel();
+                final int selection = model.getSelectedIndex();
+                if (selection >= 0) {
+                    final String oldIdentifier = model.getSelectedItem();
+                    final String identifier = identifierField.getText();
+
+                    if (!identifier.equals(oldIdentifier)) {
+                        final Double value = Constants.JCONSTANTS.remove(oldIdentifier);;
+                        final int shadowed = constantList.indexOf(identifier);
+                        if (shadowed >= 0) {
+                            constantList.remove(shadowed);
+                        }
+                        Constants.JCONSTANTS.put(identifier, value);
+                        constantList.set(selection, identifier);
+                    }
+                }
+            }
+        }));
         valueField.focusedProperty().addListener(((observableValue, v0, focused) -> {
             if (!focused) {
-
+                final var model = constantSelector.getSelectionModel();
+                final int selection = model.getSelectedIndex();
+                if (selection >= 0) {
+                    final String identifier = identifierField.getText();
+                    final Double newValue;
+                    try {
+                        newValue = Double.parseDouble(valueField.getText());
+                    } catch (Exception exception) {
+                        valueField.setText(Constants.JCONSTANTS.get(identifier).toString());
+                        return;
+                    }
+                    Constants.JCONSTANTS.put(identifier, newValue);
+                }
             }
         }));
     }
@@ -92,13 +132,13 @@ public class ConstantEditor extends GridPane implements SubWindow {
 
     @FXML
     private void onDeleteAction(ActionEvent action) {
-//        final var selectionModel = functionSelector.getSelectionModel();
-//        final int selection = selectionModel.getSelectedIndex();
-//
-//        if (selection >= 0) {
-//       //     Functions.JMATH.remove(selectionModel.getSelectedItem());
-//          //  functionList.remove(selection);
-//        }
+        final var selectionModel = constantSelector.getSelectionModel();
+        final int selection = selectionModel.getSelectedIndex();
+
+        if (selection >= 0) {
+            Constants.JCONSTANTS.remove(selectionModel.getSelectedItem());
+            constantList.remove(selection);
+        }
     }
 
     private void updateConstants() {
@@ -120,7 +160,7 @@ public class ConstantEditor extends GridPane implements SubWindow {
         }
 
         final Double value = Constants.JCONSTANTS.get(identifier);
-
+        identifierField.setText(identifier);
         valueField.setText(String.valueOf(value));
     }
 

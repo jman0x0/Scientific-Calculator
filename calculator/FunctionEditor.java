@@ -8,7 +8,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 
 import java.io.IOException;
@@ -41,6 +40,21 @@ public class FunctionEditor extends GridPane implements SubWindow {
     @FXML
     private TextField expressionField;
 
+    private UserFunction getSelectedFunction() {
+        final var selectionModel = functionSelector.getSelectionModel();
+        final int selection = selectionModel.getSelectedIndex();
+
+        if (selection >= 0) {
+            final String identifier = identifierField.getText();
+            final MathFunction function = Functions.JMATH.getFunction(identifier);
+
+            if (function instanceof UserFunction) {
+                return (UserFunction)function;
+            }
+        }
+        return null;
+    }
+
     @FXML
     public void initialize() {
         final var selectionModel = functionSelector.getSelectionModel();
@@ -50,8 +64,49 @@ public class FunctionEditor extends GridPane implements SubWindow {
             updateInformation(newValue);
         }));
         identifierField.focusedProperty().addListener(((observableValue, v0, focused) -> {
-            if (!focused) {
+            final int selection = selectionModel.getSelectedIndex();
+            if (!focused && selection >= 0) {
+                final String identifier = identifierField.getText();
+                final String oldIdentifier = selectionModel.getSelectedItem();
+                final UserFunction custom = (UserFunction)Functions.JMATH.getFunction(oldIdentifier);
 
+                if (!identifier.equals(oldIdentifier)) {
+                    functionList.remove(identifier);
+                    Functions.JMATH.remove(oldIdentifier, custom.getArguments());
+                    functionList.set(selection, identifier);
+                    custom.setIdentifier(identifier);
+                    Functions.JMATH.loadFunctionFromString(custom.getDefinition());
+                    definitionField.setText(custom.getDefinition());
+                    selectionModel.select(selection);
+                }
+            }
+        }));
+        variableField.focusedProperty().addListener(((observableValue, v0, focused) -> {
+            final UserFunction custom = getSelectedFunction();
+            if (!focused && custom != null) {
+                final String identifier = identifierField.getText();
+                final String variables = variableField.getText();
+                final int oldArguments = custom.getArguments();
+                final int newArguments = 1+(int)variables.chars().filter(ch -> ch == ',').count();
+                final MathFunction shadowed = Functions.JMATH.getFunction(identifier, newArguments);
+                try {
+                    custom.setVariables(variables.substring(1));
+                } catch (Exception exception) {
+                    variableField.setText(custom.getVariables().toString());
+                    return;
+                }
+                if (oldArguments != newArguments) {
+                    Functions.JMATH.remove(identifier, oldArguments);
+                    Functions.JMATH.remove(shadowed);
+                }
+                definitionField.setText(custom.getDefinition());
+            }
+        }));
+        expressionField.focusedProperty().addListener(((observableValue, v0, focused) -> {
+            final UserFunction custom = getSelectedFunction();
+            if (!focused && custom != null) {
+                custom.setExpression(expressionField.getText());
+                definitionField.setText(custom.getDefinition());
             }
         }));
     }

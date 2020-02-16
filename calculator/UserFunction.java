@@ -1,19 +1,19 @@
 package calculator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class UserFunction extends MathFunction {
-    private String definition;
     private String expression;
     private ArrayList<String> variables;
 
     public UserFunction(String definition) {
         this.variables = new ArrayList<>();
-        this.definition = definition.trim();
+        definition = definition.trim();
 
-        final int header = extractHeader(this.definition);
-        final int variables = extractVariables(this.definition, header);
-        this.expression = extractExpression(this.definition, variables);
+        final int header = extractHeader(definition);
+        final int variables = extractVariables(this.variables, definition, header);
+        this.expression = extractExpression(definition, variables);
     }
 
     @Override
@@ -30,7 +30,9 @@ public class UserFunction extends MathFunction {
     }
 
     public String getDefinition() {
-        return definition;
+        final String parameters = variables.toString();
+        final int pl = parameters.length();
+        return identifier + "(" + parameters.substring(1, pl-1) + ") = " + expression;
     }
 
     public String getExpression() {
@@ -45,8 +47,14 @@ public class UserFunction extends MathFunction {
         this.expression = expression;
     }
 
-    public void setVariables(ArrayList<String> variables) {
-        this.variables = variables;
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    public void setVariables(String parameters) {
+        ArrayList<String> newVars = new ArrayList<>();
+        extractVariables(newVars, parameters, 0);
+        variables = newVars;
     }
 
     private int extractHeader(String definition) {
@@ -64,7 +72,7 @@ public class UserFunction extends MathFunction {
         throw new IllegalArgumentException("Invalid function definition passed in.");
     }
 
-    private int extractVariables(String definition, int start) {
+    private int extractVariables(ArrayList<String> variables, String definition, int start) {
         int beginning = start;
         for (int i = start; i != definition.length(); ++i) {
             final char token = definition.charAt(i);

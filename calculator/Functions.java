@@ -54,23 +54,35 @@ public class Functions {
 	}
 
 
+	public MathFunction remove(MathFunction function) {
+		if (function != null && contains(function.getIdentifier())) {
+			final ArrayList<MathFunction> overloads = getOverloads(function.getIdentifier());
+
+			if (overloads.contains(function)) {
+				overloads.remove(function);
+				return function;
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Remove an overloaded function.
 	 * @param identifier The name of the overloaded function.
 	 * @param arguments Number of arguments for that overload.
-	 * @return True if the function was found and removed, else false.
+	 * @return reference to the removed function if the function was found and removed, else null.
 	 */
-	public boolean remove(String identifier, int arguments) {
+	public MathFunction remove(String identifier, int arguments) {
 		if (contains(identifier)) {
 			final ArrayList<MathFunction> overloads = m_functions.get(identifier);
 		
 			for (int idx = 0; idx != overloads.size(); ++idx) {
 				if (overloads.get(idx).getArguments() == arguments) {
-					return overloads.remove(idx) != null;
+					return overloads.remove(idx);
 				}
 			}
 		}
-		return false;
+		return null;
 	}
 
 	/**
@@ -130,6 +142,19 @@ public class Functions {
 	public void loadFunctionFromString(String definition) {
 		final UserFunction fn = new UserFunction(definition);
 		getOverloads(fn.getIdentifier()).add(fn);
+	}
+
+	public MathFunction getFunction(String identifier, int arguments) {
+		if (contains(identifier)) {
+			final ArrayList<MathFunction> overloads = getOverloads(identifier);
+
+			for (MathFunction fn : overloads) {
+				if (fn.getArguments() == arguments) {
+					return fn;
+				}
+			}
+		}
+		return null;
 	}
 
 	public MathFunction getFunction(String identifier) {
