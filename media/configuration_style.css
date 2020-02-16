@@ -1,0 +1,19 @@
+@font-face {
+    src: url("Gold-Regular.ttf");
+}
+
+.label {
+    -fx-font-size: 1.25em;
+}
+
+.text-field {
+    -fx-font-family: Gold;
+    -fx-font-size: 1.25em;
+    -fx-padding: 8 8 8 8;
+    -fx-min-width: 28em;
+}
+
+.button {
+    -fx-font-family: Gold;
+    -fx-font-size: 1.25em;
+}
