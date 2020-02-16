@@ -163,6 +163,10 @@ public class Configuration {
             final FunctionEditor editor = new FunctionEditor();
             editor.display(Configuration.STAGE_STACK.peek());
         });
+        search(items, "Constants").setOnAction(action -> {
+            final ConstantEditor editor = new ConstantEditor();
+            editor.display(Configuration.STAGE_STACK.peek());
+        });
         DISPLAY_LINES.bind(lines.valueProperty());
         OUTPUT_DIGIT_COUNT.bind(precision.valueProperty());
         DISPLAY_RESERVATION.bind(scale.valueProperty());

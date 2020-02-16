@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.collections.FXCollections?>
+
+<fx:root type="javafx.scene.layout.GridPane" stylesheets="@../media/configuration_style.css" xmlns:fx="http://javafx.com/fxml" maxHeight="Infinity" maxWidth="Infinity">
+    <fx:define>
+        <FXCollections fx:id="constantList" fx:factory="observableArrayList">
+
+        </FXCollections>
+    </fx:define>
+
+    <columnConstraints>
+        <ColumnConstraints hgrow="ALWAYS"/>
+        <ColumnConstraints hgrow="ALWAYS"/>
+    </columnConstraints>
+
+    <TitledPane GridPane.columnIndex="0" text="Constants" collapsible="false">
+        <VBox spacing="10">
+            <ListView fx:id="constantSelector" items="$constantList">
+
+            </ListView>
+            <HBox spacing="10">
+                <Button fx:id="add" HBox.hgrow="ALWAYS" onAction="#onAddAction" maxWidth="Infinity">Add</Button>
+                <Button fx:id="delete" HBox.hgrow="ALWAYS" onAction="#onDeleteAction" maxWidth="Infinity">Delete</Button>
+            </HBox>
+        </VBox>
+    </TitledPane>
+    <GridPane GridPane.columnIndex="1" alignment="CENTER" fx:id="infoPane" visible="false" hgap="16" vgap="16">
+        <VBox GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS">
+            <Label text="Conversions:"/>
+            <TextField editable="false" fx:id="conversionsField"/>
+        </VBox>
+        <VBox GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS">
+            <Label text="Value:"/>
+            <TextField fx:id="valueField"/>
+        </VBox>
+    </GridPane>
+</fx:root>

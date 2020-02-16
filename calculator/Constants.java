@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 public class Constants extends HashMap<String, Double> {
 	public static final Constants JCONSTANTS;
+
 	static {
 		JCONSTANTS = new Constants();
 		JCONSTANTS.put("π", 3.14159265358979323846);

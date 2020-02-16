@@ -8,12 +8,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 
 import java.io.IOException;
 
-public class FunctionEditor extends GridPane implements SubWindow {
+public class ConstantEditor extends GridPane implements SubWindow {
     @FXML
     private Button add;
 
@@ -21,43 +20,37 @@ public class FunctionEditor extends GridPane implements SubWindow {
     private Button delete;
 
     @FXML
-    private ObservableList<String> functionList;
+    private ObservableList<String> constantList;
 
     @FXML
-    private ListView<String> functionSelector;
+    private ListView<String> constantSelector;
 
     @FXML
     private GridPane infoPane;
 
     @FXML
-    private TextField definitionField;
+    private TextField conversionsField;
 
     @FXML
-    private TextField identifierField;
-
-    @FXML
-    private TextField variableField;
-
-    @FXML
-    private TextField expressionField;
+    private TextField valueField;
 
     @FXML
     public void initialize() {
-        final var selectionModel = functionSelector.getSelectionModel();
+        updateConstants();
 
-        updateFunctions();
+        final var selectionModel = constantSelector.getSelectionModel();
         selectionModel.selectedItemProperty().addListener(((observableValue, oldValue, newValue) -> {
             updateInformation(newValue);
         }));
-        identifierField.focusedProperty().addListener(((observableValue, v0, focused) -> {
+        valueField.focusedProperty().addListener(((observableValue, v0, focused) -> {
             if (!focused) {
 
             }
         }));
     }
 
-    public FunctionEditor() {
-        final String pathway = "calculator_functions.fxml";
+    public ConstantEditor() {
+        final String pathway = "calculator_constants.fxml";
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(pathway));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
@@ -76,7 +69,7 @@ public class FunctionEditor extends GridPane implements SubWindow {
 
     @Override
     public String getTitle() {
-        return "Calculator - Functions";
+        return "Calculator - Constants";
     }
 
     @Override
@@ -91,24 +84,31 @@ public class FunctionEditor extends GridPane implements SubWindow {
 
     @FXML
     private void onAddAction(ActionEvent action) {
-        final CreateFunction creator = new CreateFunction();
+        final CreateConstant creator = new CreateConstant();
 
         creator.display(Configuration.STAGE_STACK.peek());
-        updateFunctions();
+        updateConstants();
     }
 
     @FXML
     private void onDeleteAction(ActionEvent action) {
-        final var selectionModel = functionSelector.getSelectionModel();
-        final int selection = selectionModel.getSelectedIndex();
+//        final var selectionModel = functionSelector.getSelectionModel();
+//        final int selection = selectionModel.getSelectedIndex();
+//
+//        if (selection >= 0) {
+//       //     Functions.JMATH.remove(selectionModel.getSelectedItem());
+//          //  functionList.remove(selection);
+//        }
+    }
 
-        if (selection >= 0) {
-            Functions.JMATH.remove(selectionModel.getSelectedItem());
-            functionList.remove(selection);
+    private void updateConstants() {
+        for (var value : Constants.JCONSTANTS.entrySet()) {
+            if (!constantList.contains(value.getKey())) {
+                constantList.add(value.getKey());
+            }
         }
     }
 
-    @FXML
     private void updateInformation(String identifier) {
         if (identifier == null) {
             infoPane.setVisible(false);
@@ -118,24 +118,10 @@ public class FunctionEditor extends GridPane implements SubWindow {
         if (!infoPane.isVisible()) {
             infoPane.setVisible(true);
         }
-        final MathFunction function = Functions.JMATH.getFunction(identifier);
-        if (!(function instanceof UserFunction)) {
-            return;
-        }
-        final UserFunction custom = (UserFunction)function;
-        definitionField.setText(custom.getDefinition());
-        identifierField.setText(custom.getIdentifier());
-        variableField.setText(custom.getVariables().toString());
-        expressionField.setText(custom.getExpression());
+
+        final Double value = Constants.JCONSTANTS.get(identifier);
+
+        valueField.setText(String.valueOf(value));
     }
 
-    private void updateFunctions() {
-        for (var value : Functions.JMATH.entrySet()) {
-            for (var function : value.getValue()) {
-                if (function instanceof UserFunction && !functionList.contains(function.getIdentifier())) {
-                    functionList.add(function.getIdentifier());
-                }
-            }
-        }
-    }
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root type="javafx.scene.layout.BorderPane" stylesheets="@../media/configuration_style.css" xmlns:fx="http://javafx.com/fxml" maxHeight="Infinity" maxWidth="Infinity">
+    <center>
+        <GridPane hgap="16" alignment="CENTER">
+            <VBox GridPane.rowIndex="0" GridPane.columnIndex="0">
+                <Label text="Identifier:" alignment="CENTER"/>
+                <TextField GridPane.hgrow="ALWAYS" fx:id="identifier"/>
+            </VBox>
+            <VBox GridPane.rowIndex="1" GridPane.columnIndex="0">
+                <Label text="Constant:" alignment="CENTER"/>
+                <TextField GridPane.hgrow="ALWAYS" fx:id="constant"/>
+            </VBox>
+        </GridPane>
+    </center>
+    <bottom>
+        <FlowPane alignment="CENTER">
+            <Button onAction="#confirmConstant" fx:id="confirm" text="Confirm"/>
+        </FlowPane>
+    </bottom>
+</fx:root>
