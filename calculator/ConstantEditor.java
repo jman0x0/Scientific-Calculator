@@ -9,8 +9,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ConstantEditor extends GridPane implements SubWindow {
     @FXML
@@ -45,11 +46,6 @@ public class ConstantEditor extends GridPane implements SubWindow {
         selectionModel.selectedItemProperty().addListener(((observableValue, oldValue, newValue) -> {
             updateInformation(newValue);
         }));
-        constantSelector.focusedProperty().addListener(((observableValue, aBoolean, t1) -> {
-            if (!t1) {
-                System.out.println("Constants");
-            }
-        }));
         identifierField.focusedProperty().addListener(((observableValue, v0, focused) -> {
             if (!focused) {
                 final var model = constantSelector.getSelectionModel();
@@ -67,6 +63,24 @@ public class ConstantEditor extends GridPane implements SubWindow {
                         Constants.JCONSTANTS.put(identifier, value);
                         constantList.set(selection, identifier);
                     }
+                }
+            }
+        }));
+        conversionsField.focusedProperty().addListener(((observableValue, v0, focused) -> {
+            if (!focused) {
+                final String target = identifierField.getText();
+                final String conversions = conversionsField.getText();
+                final String trimmed = conversions.substring(1, conversions.length()-1);
+
+                final ArrayList<String> keys = new ArrayList<>(Arrays.asList(trimmed.split(",")));
+                final ArrayList<String> stored = KeyConverter.converter.getAllConversions(target);
+                stored.removeAll(keys);
+
+                for (String old : stored) {
+                    KeyConverter.converter.remove(old);
+                }
+                for (String proxy : keys) {
+                    KeyConverter.converter.put(proxy.trim(), target);
                 }
             }
         }));
@@ -162,6 +176,8 @@ public class ConstantEditor extends GridPane implements SubWindow {
         final Double value = Constants.JCONSTANTS.get(identifier);
         identifierField.setText(identifier);
         valueField.setText(String.valueOf(value));
+        final var conversions = KeyConverter.converter.getAllConversions(identifier);
+        conversionsField.setText(conversions.toString());
     }
 
 }

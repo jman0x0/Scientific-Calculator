@@ -55,6 +55,14 @@ public class FunctionEditor extends GridPane implements SubWindow {
         return null;
     }
 
+    private int removeListing(String identifier, int arguments) {
+        final int index = functionList.indexOf(functionToString(identifier, arguments));
+        if (index >= 0) {
+            functionList.remove(index);
+        }
+        return index;
+    }
+
     @FXML
     public void initialize() {
         final var selectionModel = functionSelector.getSelectionModel();
@@ -67,21 +75,25 @@ public class FunctionEditor extends GridPane implements SubWindow {
             final int selection = selectionModel.getSelectedIndex();
             if (!focused && selection >= 0) {
                 final String identifier = identifierField.getText();
-                final String oldIdentifier = selectionModel.getSelectedItem();
-                final UserFunction custom = (UserFunction)Functions.JMATH.getFunction(oldIdentifier);
+                final String oldIdentifier = extractIdentifier(selectionModel.getSelectedItem());
+                final int arguments = extractArguments(selectionModel.getSelectedItem());
 
                 if (!identifier.equals(oldIdentifier)) {
-                    functionList.remove(identifier);
-                    Functions.JMATH.remove(oldIdentifier, custom.getArguments());
-                    functionList.set(selection, identifier);
+                    final UserFunction custom = (UserFunction)Functions.JMATH.remove(oldIdentifier, arguments);
+                    final int shadowed = removeListing(identifier, arguments);
+                    Functions.JMATH.remove(identifier, arguments);
                     custom.setIdentifier(identifier);
                     Functions.JMATH.loadFunctionFromString(custom.getDefinition());
+
+                    final int newSelection = selection - (shadowed >= 0 && shadowed < selection ? 1 : 0);
+                    functionList.set(newSelection, functionToString(identifier, arguments));
+                    selectionModel.select(newSelection);
                     definitionField.setText(custom.getDefinition());
-                    selectionModel.select(selection);
                 }
             }
         }));
         variableField.focusedProperty().addListener(((observableValue, v0, focused) -> {
+            final int selection = selectionModel.getSelectedIndex();
             final UserFunction custom = getSelectedFunction();
             if (!focused && custom != null) {
                 final String identifier = identifierField.getText();
@@ -98,6 +110,11 @@ public class FunctionEditor extends GridPane implements SubWindow {
                 if (oldArguments != newArguments) {
                     Functions.JMATH.remove(identifier, oldArguments);
                     Functions.JMATH.remove(shadowed);
+
+                    final int oldListing = removeListing(identifier, newArguments);
+                    final int newSelection = selection - (oldListing >= 0 && oldListing < selection ? 1 : 0);
+                    functionList.set(newSelection, functionToString(identifier, newArguments));
+                    selectionModel.select(newSelection);
                 }
                 definitionField.setText(custom.getDefinition());
             }
@@ -163,9 +180,26 @@ public class FunctionEditor extends GridPane implements SubWindow {
         }
     }
 
+    private String extractIdentifier(String overload) {
+        final int end = overload.indexOf('(');
+        return overload.substring(0, end);
+    }
+
+    private int extractArguments(String overload) {
+        final int start = overload.indexOf('(');
+        final int end = overload.length();
+        try {
+            Integer value = Integer.parseInt(overload.substring(start+1, end-1));
+            return value;
+        } catch (Exception exception) {
+
+        }
+        return 0;
+    }
+
     @FXML
-    private void updateInformation(String identifier) {
-        if (identifier == null) {
+    private void updateInformation(String overload) {
+        if (overload == null) {
             infoPane.setVisible(false);
             return;
         }
@@ -173,7 +207,10 @@ public class FunctionEditor extends GridPane implements SubWindow {
         if (!infoPane.isVisible()) {
             infoPane.setVisible(true);
         }
-        final MathFunction function = Functions.JMATH.getFunction(identifier);
+        final String identifier = extractIdentifier(overload);
+        final int arguments = extractArguments(overload);
+
+        final MathFunction function = Functions.JMATH.getFunction(identifier, arguments);
         if (!(function instanceof UserFunction)) {
             return;
         }
@@ -184,11 +221,16 @@ public class FunctionEditor extends GridPane implements SubWindow {
         expressionField.setText(custom.getExpression());
     }
 
+    private String functionToString(String identifier, int arguments) {
+        return identifier + "(" + arguments + ")";
+    }
+
     private void updateFunctions() {
         for (var value : Functions.JMATH.entrySet()) {
             for (var function : value.getValue()) {
-                if (function instanceof UserFunction && !functionList.contains(function.getIdentifier())) {
-                    functionList.add(function.getIdentifier());
+                final String overload = functionToString(function.getIdentifier(), function.getArguments());
+                if (function instanceof UserFunction && !functionList.contains(overload)) {
+                    functionList.add(overload);
                 }
             }
         }

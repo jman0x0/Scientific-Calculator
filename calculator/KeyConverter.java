@@ -1,5 +1,6 @@
 package calculator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class KeyConverter extends HashMap<String, String> {
@@ -15,6 +16,16 @@ public class KeyConverter extends HashMap<String, String> {
             return get(value);
         }
         return value;
+    }
+
+    public ArrayList<String> getAllConversions(String target) {
+        final ArrayList<String> keys = new ArrayList<>();
+        for (var entry : entrySet()) {
+            if (entry.getValue().equals(target)) {
+                keys.add(entry.getKey());
+            }
+        }
+        return keys;
     }
 
     static {
