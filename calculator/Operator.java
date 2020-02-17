@@ -7,7 +7,25 @@ import java.util.function.*;
 public class Operator {
     public enum Associativity {
         LEFT_TO_RIGHT,
-        RIGHT_TO_LEFT
+        RIGHT_TO_LEFT;
+
+        public String prettyName() {
+            switch (this) {
+                case LEFT_TO_RIGHT:
+                    return "Left to Right";
+                case RIGHT_TO_LEFT:
+                    return "Right to Left";
+                default:
+                    return "";
+            }
+        }
+
+        public static Associativity fromPrettyName(String pretty) {
+            if (pretty.equals("Left to Right")) {
+                return LEFT_TO_RIGHT;
+            }
+            return RIGHT_TO_LEFT;
+        }
     }
 
     private int operands;
@@ -31,6 +49,14 @@ public class Operator {
         this.identifier = identifier;
         this.associativity = associativity;
         this.operation = operation;
+    }
+
+    public void setPrecedence(int precedence) {
+        this.precedence = precedence;
+    }
+
+    public void setAssociativity(Associativity associativity) {
+        this.associativity = associativity;
     }
 
     /**

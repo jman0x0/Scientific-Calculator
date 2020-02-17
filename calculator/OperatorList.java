@@ -3,6 +3,7 @@ package calculator;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.function.*;
 
 public class OperatorList {
@@ -261,5 +262,9 @@ public class OperatorList {
      */
     public void clear() {
         m_operators.clear();
+    }
+
+    public Set<Map.Entry<String, ArrayList<Operator>>> entrySet() {
+        return m_operators.entrySet();
     }
 }

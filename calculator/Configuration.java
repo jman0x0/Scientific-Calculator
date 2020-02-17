@@ -167,6 +167,11 @@ public class Configuration {
             final ConstantEditor editor = new ConstantEditor();
             editor.display(Configuration.STAGE_STACK.peek());
         });
+        search(items, "Operators").setOnAction(action -> {
+            final OperatorEditor editor = new OperatorEditor();
+            editor.display(Configuration.STAGE_STACK.peek());
+        });
+
         DISPLAY_LINES.bind(lines.valueProperty());
         OUTPUT_DIGIT_COUNT.bind(precision.valueProperty());
         DISPLAY_RESERVATION.bind(scale.valueProperty());
