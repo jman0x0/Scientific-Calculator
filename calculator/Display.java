@@ -215,7 +215,7 @@ public class Display extends VBox {
             case "MC":
                 memory = 0;
                 break;
-            case "M-":
+            case "M–":
                 memory -= answer;
                 break;
             case "M+":

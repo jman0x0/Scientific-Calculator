@@ -76,8 +76,8 @@ public class Main extends Application {
         final FXMLLoader loader = new FXMLLoader(getClass().getResource("calculator_main.fxml"));
         final Parent root = loader.load();
         //Load and set the window's icon.
-        primaryStage.getIcons().addAll(new Image(getClass().getResourceAsStream("../media/icon64x64.png")),
-                new Image(getClass().getResourceAsStream("../media/icon48x48.png")));
+        primaryStage.getIcons().addAll(new Image(getClass().getResourceAsStream("/media/icon64x64.png")),
+                new Image(getClass().getResourceAsStream("/media/icon48x48.png")));
         primaryStage.setTitle("Calculator");
         primaryStage.setScene(new Scene(root, Configuration.SCREEN_WIDTH, Configuration.SCREEN_HEIGHT));
         final Main controller = loader.getController();

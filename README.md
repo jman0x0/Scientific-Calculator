@@ -12,7 +12,7 @@ This is a project that uses Java and JavaFX to create and design a graphical sci
 | Operation History          | :white_check_mark: |
 | Editable Settings          | :white_check_mark: |
 | Custom Functions           | :white_check_mark: |
-| Custom Functions           | :white_check_mark: |
+| Custom Constants           | :white_check_mark: |
 
 ## Output
 ![Graphical Calculator Image](example/output.PNG)
