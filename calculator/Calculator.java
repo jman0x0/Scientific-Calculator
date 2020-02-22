@@ -297,6 +297,7 @@ public class Calculator {
             processOperator(operations, values);
         }
 
+
        final Double result = values.empty() ? null : values.peek();
         return new Parsing(result, start+1, closer);
     }
@@ -405,16 +406,27 @@ public class Calculator {
     public Parsing parseDouble(String expression, int start, int end) {
         int idx = start;
         boolean decimal = false; //Can only exist one decimal point.
-        
+        boolean scientific = false; //Can only exist a single E.
+        boolean inverse = false;
+
         for (; idx < end; ++idx) {
             final char ch = expression.charAt(idx);
             //Check for a decimal point, if one isn't yet found.
             if (ch == '.' && !decimal) {
                 decimal = true; //Toggle decimal flag.
             }
-            else if (ch == '.' || !Character.isDigit(ch)) {
+            else if (Character.toUpperCase(ch) == 'E' && !scientific) {
+                scientific = true;
+            }
+            else if (scientific && ch == '-' && !inverse) {
+                inverse = true;
+            }
+            else if (!Character.isDigit(ch)) {
                 break; //Break if another decimal point is encountered or any non-digit character.
             }
+        }
+        if (scientific && expression.charAt(idx-1) == 'E') {
+            throw new RuntimeException("Scientific format requires an integer exponent.");
         }
         //Convert string to double.
         final double value = Double.parseDouble(expression.substring(start, idx));

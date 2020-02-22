@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 
 public class Display extends VBox {
@@ -461,32 +462,18 @@ public class Display extends VBox {
     private void attachTextConverter() {
         editor.textProperty().addListener(((observableValue, oldText, newText) -> {
             //Translate all characters and strings into appropriate symbols.
-            final StringBuilder builder = new StringBuilder(editor.getText());
-            int delta = newText.length() - oldText.length();
-            for (var keypair : KeyConverter.converter.entrySet()) {
-                final String key = keypair.getKey();
-                final String value = keypair.getValue();
-                int index = 0;
+            final int oldCaret = editor.getCaretPosition() + newText.length() - oldText.length();
+            final var edit = KeyConverter.converter.replaceAll(newText, oldCaret);
 
-                //Replace all characters.
-                while ((index = builder.indexOf(key, index)) != -1) {
-                    builder.delete(index, index+key.length());
-                    builder.insert(index, value);
-                    index += key.length();
-                    delta += value.length() - key.length();
-                }
-            }
-
-            if (newText.equals(builder.toString())) {
+            if (newText.equals(edit.text)) {
                 return;
             }
             //Can't modify text to a shorter length while here,
             //otherwise an IllegalArgumentException is thrown internally by JFX indicating out of bounds access.
             //Thus, we temporarily delay modification.
-            final int caret = editor.getCaretPosition() + delta;
             Platform.runLater(() -> {
-                setEditorText(builder.toString());
-                editor.positionCaret(caret);
+                setEditorText(edit.text);
+                editor.positionCaret(edit.cursor);
             });
         }));
     }

@@ -45,6 +45,14 @@ public class CreateConstant extends BorderPane implements SubWindow {
 
     @FXML
     private void confirmConstant(ActionEvent action) {
+        final String identity = identifier.getText();
+        if (identity.isEmpty()) {
+            return;
+        }
+        if (!Configuration.isFirstIdentifierChar(identity.charAt(0))) {
+            return;
+        }
+
         final Double value;
         try {
             value = Double.parseDouble(constant.getText());

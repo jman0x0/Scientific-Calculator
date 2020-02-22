@@ -98,6 +98,8 @@ public class Configuration {
         return Character.isDigit(ch) || ch == '.';
     }
 
+    public static boolean isFirstIdentifierChar(char ch) { return Character.isJavaIdentifierStart(ch); }
+
     public static boolean isIdentifierChar(char ch) {
         return Character.isJavaIdentifierPart(ch);
     }
