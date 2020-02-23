@@ -1,7 +1,7 @@
 package calculator;
 
 import java.util.Set;
-import java.util.function.*;
+import java.util.function.Function;
 import java.util.HashMap;
 import java.util.Map;
 import java.lang.Math;
@@ -255,5 +255,11 @@ public class Functions {
 			return lower + Math.random() * (upper - lower);
 		});
 		JMATH.loadFunctionFromString("nthroot(value, n) = value ^ (1/n)");
+		JMATH.loadFunctionFromString("randInt(l, u) = floor(rand(floor(l), floor(u)+1))");
+		JMATH.loadFunctionFromString("pick(cnd, lhs, rhs) = lhs(cnd != 0) + rhs(cnd == 0)");
+		JMATH.loadFunctionFromString("choose(n, c) = n! / (c!(n-c)!)");
+		JMATH.loadFunctionFromString("degrees(rads) = rads * (180/pi)");
+		JMATH.loadFunctionFromString("radians(degs) = degs * (pi/180)");
+
 	}
 }

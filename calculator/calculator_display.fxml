@@ -1,7 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.CustomMenuItem?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.VBox?>
 
 <fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml">
     <fx:define>
@@ -45,15 +58,15 @@
                                 <Label GridPane.columnIndex="0" GridPane.rowIndex="3">
                                     Display Scale:
                                 </Label>
-                                <Slider  fx:id="slider_characters" blockIncrement="1.0"
-                                         cache="true"
-                                         majorTickUnit="5.0"
-                                         max="30.0"
-                                         min="10.0"
-                                         minorTickCount="4"
-                                         snapToTicks="true"
-                                         value="20.0" maxWidth="Infinity" showTickMarks="true" showTickLabels="true"
-                                         GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                                <Slider fx:id="slider_characters" blockIncrement="1.0"
+                                        cache="true"
+                                        majorTickUnit="5.0"
+                                        max="30.0"
+                                        min="10.0"
+                                        minorTickCount="4"
+                                        snapToTicks="true"
+                                        value="20.0" maxWidth="Infinity" showTickMarks="true" showTickLabels="true"
+                                        GridPane.columnIndex="1" GridPane.rowIndex="0"/>
                                 <Slider  fx:id="slider_lines" blockIncrement="1.0"
                                          cache="true"
                                          majorTickUnit="2.0"

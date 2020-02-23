@@ -100,7 +100,7 @@ public class UserFunction extends MathFunction {
             final char token = definition.charAt(i);
 
             if (!Character.isWhitespace(token) && token != '=') {
-                return definition.substring(i);
+                return KeyConverter.converter.replaceAll(definition.substring(i));
             }
         }
         throw new IllegalArgumentException("Function definition has no evaluable expression.");

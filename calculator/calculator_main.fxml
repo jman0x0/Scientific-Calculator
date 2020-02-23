@@ -2,7 +2,7 @@
 <?import calculator.Display?>
 <?import calculator.Keypad?>
 
-<BorderPane fx:controller="calculator.Main" xmlns:fx="http://javafx.com/fxml" stylesheets="@../media/stylesheet.css">
+<BorderPane fx:controller="calculator.Main" xmlns:fx="http://javafx.com/fxml" stylesheets="@stylesheet.css">
     <top>
         <Display fx:id="display"/>
     </top>

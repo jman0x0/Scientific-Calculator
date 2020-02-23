@@ -1,8 +1,15 @@
 package calculator;
 
 import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.beans.property.*;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.CustomMenuItem;
+import javafx.scene.control.Slider;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.stage.Stage;
 
@@ -87,6 +94,9 @@ public class Configuration {
      */
     public static final DoubleProperty RATIONAL_LOWER_BOUND = new SimpleDoubleProperty(1e-14);
 
+    /**
+     * Used to keep track of the most recent stage's being displayed.
+     */
     public static final Stack<Stage> STAGE_STACK = new Stack<>();
 
     /**

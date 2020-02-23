@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
 <?import calculator.ShiftableButton?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.GridPane?>
+
 <fx:root type="javafx.scene.layout.GridPane" xmlns:fx="http://javafx.com/fxml" alignment="CENTER" hgap="6" vgap="6" maxHeight="Infinity" maxWidth="Infinity">
     <ToggleButton GridPane.columnIndex="0" id="keypad_shift" GridPane.rowIndex="0">2ND</ToggleButton>
     <ShiftableButton GridPane.columnIndex="1" id="keypad_function" GridPane.rowIndex="0">asin asinh</ShiftableButton>

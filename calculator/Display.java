@@ -3,11 +3,16 @@ package calculator;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.*;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Label;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Labeled;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.VBox;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.text.DecimalFormat;
+import java.util.function.Function;
 
 public class Display extends VBox {
     private int active;
@@ -230,11 +235,28 @@ public class Display extends VBox {
                 break;
             default:
                 insertText(command);
+
+                if (Functions.JMATH.contains(command)) {
+                    insertParenthesis();
+                }
                 break;
         }
 
         //Update memory indicator.
         status.setText("MR: " + formatDouble(memory, Configuration.MEMORY_DIGIT_COUNT));
+    }
+
+    public void insertParenthesis() {
+        final String text = editor.getText();
+        final int caret = editor.getCaretPosition();
+
+        if (caret >= text.length() || (!Configuration.isIdentifierChar(text.charAt(caret)) && !Configuration.isOpeningBracket(text.charAt(caret)))) {
+            insertText("()");
+            editor.positionCaret(caret+1);
+        }
+        else if (!Configuration.isOpeningBracket(text.charAt(caret))) {
+            insertText("(");
+        }
     }
 
     /**

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
-import java.util.function.*;
+import java.util.function.Function;
 
 public class OperatorList {
     private Map<String, ArrayList<Operator>> m_operators;
@@ -28,6 +28,9 @@ public class OperatorList {
         });
         PEMDAS.add("=", 6, 2, (args) -> {
             return args.get(0).equals(args.get(1)) ? 1. : 0.;
+        });
+        PEMDAS.add("!=", 6, 2, (args) -> {
+            return args.get(0).equals(args.get(1)) ? 0. : 1.;
         });
         PEMDAS.add("≠", 6, 2, (args) -> {
             return args.get(0).equals(args.get(1)) ? 0. : 1.;
@@ -193,18 +196,24 @@ public class OperatorList {
     }
 
     /**
-     *
-     * @param identifier
-     * @param precedence
-     * @param operands
-     * @param operation
-     * @param associativity
+     * Register an operator and its associativity.
+     * @param identifier The operator's signature.
+     * @param precedence The operator's precedence/priority over other operators.
+     * @param operands The number of operands needed to properly invoke the operator.
+     * @param operation The functional operation performed by this operator.
+     * @param associativity The value that determines if the operator is evaluated from left to right or right to left.
      */
     public void add(String identifier, int precedence, int operands, Function<ArrayList<Double>, Double> operation, Operator.Associativity associativity) {
     	final ArrayList<Operator> operators = getOperators(identifier);
     	operators.add(new Operator(operands, precedence, identifier, associativity, operation));
     }
-    
+
+    /**
+     * Obtain the operator via its identifier and number of operands.
+     * @param identifier The signature to look for.
+     * @param operands The amount of operands to look for.
+     * @return The operator with the same identifier and amount of operands if its contained, else null.
+     */
     public Operator get(String identifier, int operands) {
     	if (contains(identifier)) {
         	final ArrayList<Operator> operators = m_operators.get(identifier);
@@ -251,7 +260,7 @@ public class OperatorList {
 
     /**
      * Determine if this OperatorList has any operators mapped.
-     * @return
+     * @return True if there are any operators, else false.
      */
     public boolean isEmpty() {
         return m_operators.isEmpty();

@@ -2,7 +2,7 @@ package calculator;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.function.*;
+import java.util.function.Function;
 
 public class Operator {
     public enum Associativity {
