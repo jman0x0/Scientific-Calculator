@@ -13,7 +13,7 @@
 
 <fx:root type="javafx.scene.layout.GridPane" stylesheets="@configuration_style.css" xmlns:fx="http://javafx.com/fxml" maxHeight="Infinity" maxWidth="Infinity">
     <fx:define>
-        <FXCollections fx:id="operatorList" fx:factory="observableArrayList">
+        <FXCollections fx:id="items" fx:factory="observableArrayList">
 
         </FXCollections>
         <FXCollections fx:id="associativityList" fx:factory="observableArrayList">
@@ -29,7 +29,7 @@
 
     <TitledPane GridPane.columnIndex="0" text="Operators" collapsible="false">
         <VBox spacing="10">
-            <ListView fx:id="operatorSelector" items="$operatorList">
+            <ListView fx:id="selector" items="$items">
 
             </ListView>
         </VBox>

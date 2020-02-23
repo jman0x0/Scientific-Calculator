@@ -1,35 +1,12 @@
 package calculator;
 
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class OperatorEditor extends GridPane implements SubWindow {
-    @FXML
-    private Button add;
-
-    @FXML
-    private Button delete;
-
-    @FXML
-    private ObservableList<String> operatorList;
-
-    @FXML
-    private ListView<String> operatorSelector;
-
-    @FXML
-    private GridPane infoPane;
-
+public class OperatorEditor extends EditorWindow {
     @FXML
     private TextField identifierField;
 
@@ -46,10 +23,7 @@ public class OperatorEditor extends GridPane implements SubWindow {
     public void initialize() {
         updateOperators();
 
-        final var selectionModel = operatorSelector.getSelectionModel();
-        selectionModel.selectedItemProperty().addListener(((observableValue, oldValue, newValue) -> {
-            updateInformation(newValue);
-        }));
+        final var selectionModel = selector.getSelectionModel();
         conversionsField.focusedProperty().addListener(((observableValue, v0, focused) -> {
             if (!focused) {
                 final String target = identifierField.getText();
@@ -94,36 +68,12 @@ public class OperatorEditor extends GridPane implements SubWindow {
     }
 
     public OperatorEditor() {
-        final String pathway = "calculator_operators.fxml";
-        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(pathway));
-        fxmlLoader.setRoot(this);
-        fxmlLoader.setController(this);
-
-        try {
-            fxmlLoader.load();
-        } catch (IOException exception) {
-            throw new RuntimeException(exception);
-        }
-    }
-
-    @Override
-    public Scene buildScene() {
-        return new Scene(this);
+        super("calculator_operators.fxml");
     }
 
     @Override
     public String getTitle() {
         return "Calculator - Operators";
-    }
-
-    @Override
-    public double getWindowWidth() {
-        return Configuration.ASPECT_X * 40;
-    }
-
-    @Override
-    public double getWindowHeight() {
-        return Configuration.ASPECT_Y * 40;
     }
 
     private String extractIdentifier(String overload) {
@@ -152,21 +102,15 @@ public class OperatorEditor extends GridPane implements SubWindow {
             for (var operator : entry.getValue()) {
                 final String identity = operatorIdentity(operator.getIdentifier(), operator.getOperands());
 
-                if (!operatorList.contains(identity)) {
-                    operatorList.add(identity);
+                if (!items.contains(identity)) {
+                    items.add(identity);
                 }
             }
         }
     }
 
-    private void updateInformation(String operatorIdentity) {
-        if (operatorIdentity == null) {
-            infoPane.setVisible(false);
-            return;
-        }
-        if (!infoPane.isVisible()) {
-            infoPane.setVisible(true);
-        }
+    @Override
+    protected void updateInformation(String operatorIdentity) {
         final String identifier = extractIdentifier(operatorIdentity);
         final int operands = extractOperands(operatorIdentity);
 

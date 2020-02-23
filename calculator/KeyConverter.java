@@ -53,6 +53,7 @@ public class KeyConverter extends HashMap<String, String> {
             //Replace all characters.
             int index = 0;
             while ((index = builder.indexOf(key, index)) >= 0) {
+                final int end = index + key.length();
                 final int delta = value.length() - key.length();
                 builder.delete(index, index+key.length());
                 builder.insert(index, value);

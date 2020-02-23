@@ -14,7 +14,7 @@
 
 <fx:root type="javafx.scene.layout.GridPane" stylesheets="@configuration_style.css" xmlns:fx="http://javafx.com/fxml" maxHeight="Infinity" maxWidth="Infinity">
     <fx:define>
-        <FXCollections fx:id="functionList" fx:factory="observableArrayList">
+        <FXCollections fx:id="items" fx:factory="observableArrayList">
 
         </FXCollections>
     </fx:define>
@@ -26,7 +26,7 @@
 
     <TitledPane GridPane.columnIndex="0" text="Functions" collapsible="false">
         <VBox spacing="10">
-            <ListView fx:id="functionSelector" items="$functionList">
+            <ListView fx:id="selector" items="$items">
 
             </ListView>
             <HBox spacing="10">
